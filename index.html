@@ -210,6 +210,7 @@
 
     <script>
         // --- 1. 데이터: 단과대학 및 학과 목록 ---
+        // 요청하신 모든 대학 및 학과 정보를 담았습니다.
         const collegeData = {
             "컴퓨터소프트웨어특성화대학": ["컴퓨터정보공학과", "인공지능융합학과", "임베디드소프트웨어학과", "소프트웨어학과", "IT융합통신공학과"],
             "해양·바이오특성화대학": ["생명과학과", "해양수산공공인재학과", "해양생명과학과", "해양생물자원학과", "수산생명의학과", "식품영양학과", "기관공학과", "식품생명공학과"],
@@ -223,6 +224,8 @@
         // --- 2. 초기화 및 단과대학 선택 로직 ---
         window.onload = function() {
             const collegeSelect = document.getElementById('collegeSelect');
+            
+            // 데이터 기반으로 단과대학 옵션 생성
             for (let college in collegeData) {
                 let option = document.createElement('option');
                 option.value = college;
@@ -237,9 +240,10 @@
             const majorSelect = document.getElementById('majorSelect');
             const selectedCollege = collegeSelect.value;
 
-            // 학과 목록 초기화
+            // 학과 목록 초기화 (기존 목록 삭제)
             majorSelect.innerHTML = '<option value="">학과를 선택하세요</option>';
 
+            // 선택된 단과대학이 있을 경우 해당 학과들 추가
             if (selectedCollege && collegeData[selectedCollege]) {
                 const majors = collegeData[selectedCollege];
                 majors.forEach(major => {
@@ -259,7 +263,7 @@
             const grammar = document.getElementById('grammarSelect').value;
             const keyword = document.getElementById('keyword').value || "(Topic Keyword)";
             
-            // AI에게 한국어 학과명을 그대로 전달하여 역할극 요청
+            // AI에게 전공 교수로 역할 부여
             const txt = `Act as a professor in ${major} (${college}).
 I am a student majoring in ${major}.
 
@@ -297,4 +301,45 @@ Please create 3 example sentences using "${grammar}" related to the keyword "${k
             document.getElementById('tool-' + toolId).classList.add('active');
             
             if(toolId === 'generator') { 
-                document
+                document.querySelectorAll('.nav-tab')[0].classList.add('active');
+                document.getElementById('m-gen').classList.add('active');
+            }
+            if(toolId === 'submission') {
+                document.querySelectorAll('.nav-tab')[1].classList.add('active');
+                document.getElementById('m-sub').classList.add('active');
+            }
+            if(toolId === 'review') {
+                document.querySelectorAll('.nav-tab')[2].classList.add('active');
+                document.getElementById('m-rev').classList.add('active');
+            }
+        }
+
+        // ★★★ Giscus 설정 (ID값 채워넣기 필수) ★★★
+        (function() {
+            const script = document.createElement('script');
+            script.src = "https://giscus.app/client.js";
+            
+            // 선생님이 성공한 주소 그대로 유지
+            script.setAttribute("data-repo", "rlaclajrdj25/rlaclajrdj25.github.io");
+            
+            // ▼▼▼ [중요] 아까 복사해둔 ID값 2개를 아래 점(...) 대신 붙여넣으세요 ▼▼▼
+            script.setAttribute("data-repo-id", "R_kgDOL..."); 
+            script.setAttribute("data-category", "General");
+            script.setAttribute("data-category-id", "DIC_kwDOL..."); 
+            // ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
+            
+            script.setAttribute("data-mapping", "pathname");
+            script.setAttribute("data-strict", "0");
+            script.setAttribute("data-reactions-enabled", "1");
+            script.setAttribute("data-emit-metadata", "0");
+            script.setAttribute("data-input-position", "bottom");
+            script.setAttribute("data-theme", "light");
+            script.setAttribute("data-lang", "ko");
+            script.crossOrigin = "anonymous";
+            script.async = true;
+            
+            document.querySelector('.giscus').appendChild(script);
+        })();
+    </script>
+</body>
+</html>
