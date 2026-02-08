@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 생성기</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="app-header">
+        <a href="index.html" class="home-btn"><i class="fa-solid fa-house"></i></a>
+        <nav class="nav-links">
+            <a href="generator.html" class="nav-link active">생성기</a>
+            <a href="submission.html" class="nav-link">과제제출</a>
+            <a href="quiz.html" class="nav-link">Quiz</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <div class="panel">
+            <h3><i class="fa-solid fa-sliders"></i> 학습 조건 설정</h3>
+            <label>단과대학</label>
+            <select id="collegeSelect" onchange="updateMajors()"><option value="">선택하세요</option></select>
+            
+            <label>학과</label>
+            <select id="majorSelect" onchange="generatePrompt()"><option value="">선택하세요</option></select>
+            
+            <label>문법 주제</label>
+            <select id="grammarSelect" onchange="generatePrompt()">
+                <option value="Passive Voice">수동태 (Passive Voice)</option>
+                <option value="Relative Clauses">관계대명사</option>
+                <option value="To-Infinitive">To 부정사</option>
+            </select>
+            
+            <label>키워드</label>
+            <input type="text" id="keyword" placeholder="예: 데이터, 세포..." oninput="generatePrompt()">
+        </div>
+
+        <div class="panel" style="background:#2c3e50; color:white;">
+            <h3><i class="fa-solid fa-terminal"></i> AI 프롬프트</h3>
+            <div id="promptDisplay" class="prompt-box">Loading...</div>
+            <button class="copy-btn" onclick="copyPrompt()">복사하기</button>
+        </div>
+    </div>
+
+    <nav class="bottom-nav">
+        <a href="generator.html" class="b-item active"><i class="fa-solid fa-wand-magic-sparkles"></i> 생성</a>
+        <a href="submission.html" class="b-item"><i class="fa-solid fa-file-pen"></i> 제출</a>
+        <a href="quiz.html" class="b-item"><i class="fa-solid fa-layer-group"></i> Quiz</a>
+    </nav>
+
+    <script src="script.js"></script>
+</body>
+</html>
