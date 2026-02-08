@@ -3,423 +3,471 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Grammar Quest</title>
+    <title>Major-Specific AI Grammar</title>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;600;700&display=swap" rel="stylesheet">
 
     <style>
-        /* --- 기본 설정 --- */
+        /* --- CSS 변수 및 기본 설정 --- */
         :root {
-            --primary-color: #6c5ce7;
-            --secondary-color: #a29bfe;
-            --bg-color: #dfe6e9;
-            --text-color: #2d3436;
+            --primary: #2c3e50; /* 대학 느낌의 네이비 */
+            --accent: #3498db;  /* 포인트 블루 */
+            --bg: #f8f9fa;
+            --card-bg: #ffffff;
+            --text: #2c3e50;
+            --border: #e9ecef;
         }
+
+        * { box-sizing: border-box; }
 
         body {
-            font-family: 'Noto Sans KR', sans-serif;
+            font-family: 'Pretendard', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
             margin: 0;
-            padding: 0;
-            background-color: var(--bg-color);
-            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
         }
 
-        /* --- 1. 네비게이션 바 (메뉴) --- */
-        .navbar {
+        /* --- 상단 네비게이션 --- */
+        header {
+            background: white;
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--border);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background-color: white;
-            padding: 15px 30px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             position: sticky;
             top: 0;
             z-index: 100;
         }
 
         .logo {
-            font-family: 'Jua', sans-serif;
-            font-size: 1.5rem;
-            color: var(--primary-color);
-            cursor: pointer;
-        }
-
-        .nav-links {
-            list-style: none;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--primary);
             display: flex;
-            gap: 20px;
-            margin: 0;
-            padding: 0;
+            align-items: center;
+            gap: 10px;
         }
 
-        .nav-links li {
+        .nav-tabs {
+            display: flex;
+            gap: 5px;
+            background: #f1f3f5;
+            padding: 5px;
+            border-radius: 10px;
+        }
+
+        .nav-btn {
+            border: none;
+            background: none;
+            padding: 8px 16px;
+            border-radius: 7px;
+            font-size: 0.9rem;
             cursor: pointer;
-            font-weight: bold;
-            color: #636e72;
-            transition: color 0.3s;
+            font-weight: 600;
+            color: #868e96;
+            transition: all 0.2s;
         }
 
-        .nav-links li:hover, .nav-links li.active {
-            color: var(--primary-color);
+        .nav-btn.active {
+            background: white;
+            color: var(--primary);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
 
-        /* --- 2. 페이지 섹션 공통 --- */
-        .page-section {
-            display: none; /* 기본적으로 숨김 */
-            padding: 40px 20px;
-            max-width: 1000px;
+        /* --- 메인 컨텐츠 영역 --- */
+        main {
+            flex: 1;
+            padding: 20px;
+            max-width: 800px;
+            width: 100%;
             margin: 0 auto;
-            animation: fadeIn 0.5s ease;
         }
 
-        .page-section.active {
-            display: block; /* 활성화된 페이지만 보임 */
-        }
+        .screen { display: none; animation: fadeIn 0.3s ease; }
+        .screen.active { display: block; }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
+            from { opacity: 0; transform: translateY(5px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* --- 3. 홈 화면 (Hero Section) --- */
-        .hero {
-            text-align: center;
-            padding: 80px 20px;
-            background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
-            color: white;
-            border-radius: 20px;
-            margin-top: 20px;
-            box-shadow: 0 10px 20px rgba(108, 92, 231, 0.2);
-        }
-
-        .hero h1 {
-            font-family: 'Jua', sans-serif;
-            font-size: 3rem;
+        /* --- 1. 프롬프트 생성기 (핵심 기능) --- */
+        .control-panel {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.03);
+            border: 1px solid var(--border);
             margin-bottom: 20px;
         }
 
-        .hero p {
-            font-size: 1.2rem;
-            margin-bottom: 40px;
-            opacity: 0.9;
-        }
-
-        .cta-btn {
-            background-color: white;
-            color: var(--primary-color);
-            padding: 15px 40px;
-            font-size: 1.2rem;
-            font-weight: bold;
-            border: none;
-            border-radius: 50px;
-            cursor: pointer;
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-
-        .cta-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        }
-
-        /* --- 4. 문법 지도 스타일 (기존 코드 유지) --- */
-        .map-header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .progress-container {
-            background-color: #dcdde1;
-            border-radius: 50px;
-            height: 25px;
-            width: 80%;
-            margin: 20px auto;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .progress-bar {
-            background: linear-gradient(90deg, #fd79a8, #6c5ce7);
-            height: 100%;
-            width: 0%;
-            transition: width 1s ease-in-out;
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 15px;
             display: flex;
             align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 12px;
-            font-weight: bold;
+            gap: 8px;
         }
 
-        .map-grid {
+        .select-group {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 25px;
-        }
-
-        .island {
-            background: white;
-            border-radius: 20px;
-            padding: 30px 20px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-            border: 3px solid transparent;
-        }
-
-        .island.locked {
-            filter: grayscale(100%);
-            opacity: 0.7;
-            border: 3px dashed #b2bec3;
-        }
-
-        .island.conquered {
-            border: 3px solid var(--primary-color);
-            background-color: #fff;
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(108, 92, 231, 0.2);
-        }
-
-        .island i {
-            font-size: 3rem;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
             margin-bottom: 15px;
-            display: block;
         }
 
-        .island:nth-child(1) i { color: #e17055; }
-        .island:nth-child(2) i { color: #00b894; }
-        .island:nth-child(3) i { color: #0984e3; }
-        .island:nth-child(4) i { color: #6c5ce7; }
-        .island:nth-child(5) i { color: #fdcb6e; }
-        .island:nth-child(6) i { color: #e84393; }
-
-        .status-badge {
-            display: inline-block;
-            margin-top: 10px;
-            padding: 5px 10px;
-            border-radius: 15px;
-            font-size: 0.8rem;
-            font-weight: bold;
-        }
-        .locked .status-badge { background: #b2bec3; color: white; }
-        .conquered .status-badge { background: var(--primary-color); color: white; }
-
-        /* 모달 스타일 */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
+        select, input {
             width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.6);
-            backdrop-filter: blur(5px);
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 0.95rem;
         }
 
-        .modal-content {
-            background-color: #fff;
-            margin: 5% auto;
-            padding: 0;
-            width: 90%;
-            max-width: 800px;
-            border-radius: 20px;
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-
-        .modal-header {
-            background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+        .prompt-box {
+            background: #2d3436;
+            color: #dfe6e9;
             padding: 20px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            position: relative;
+            margin-top: 15px;
+            white-space: pre-wrap;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255,255,255,0.2);
             color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        .action-btn {
+            background: var(--primary);
+            color: white;
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .action-btn:hover { background: #1a252f; }
+
+        /* --- 2. 과제 제출 (Giscus) --- */
+        .submission-area {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid var(--border);
+        }
+
+        .guide-text {
+            background: #e3f2fd;
+            color: #1565c0;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+
+        /* --- 3. 모바일 복습 앱 (카드 UI) --- */
+        .flashcard-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .flashcard {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            border-left: 5px solid var(--accent);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .flashcard:active { transform: scale(0.98); }
+
+        .card-tag {
+            font-size: 0.8rem;
+            color: #888;
+            margin-bottom: 5px;
             display: flex;
             justify-content: space-between;
-            align-items: center;
         }
 
-        .modal-body { padding: 30px; }
-        .code-block { background: #2d3436; color: #fab1a0; padding: 10px; border-radius: 5px; cursor: pointer; margin-top: 10px; }
-        .complete-btn { background-color: #00b894; color: white; border: none; padding: 15px; width: 100%; border-radius: 10px; cursor: pointer; margin-top: 20px; font-size: 1.1rem; }
-        .close-btn { cursor: pointer; font-size: 1.5rem; }
+        .card-content {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
 
+        .card-answer {
+            display: none;
+            color: var(--accent);
+            font-size: 0.95rem;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px dashed #eee;
+        }
+        
+        .flashcard.flipped .card-answer { display: block; }
+
+        /* --- 하단 모바일 네비게이션 (앱 느낌) --- */
+        .mobile-fab {
+            display: none;
+        }
+
+        /* 반응형: 모바일 화면 */
+        @media (max-width: 600px) {
+            header { padding: 10px 15px; }
+            .nav-tabs { display: none; } /* 상단 탭 숨김 */
+            
+            /* 하단 고정 탭바 */
+            .bottom-nav {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                width: 100%;
+                background: white;
+                border-top: 1px solid var(--border);
+                display: flex;
+                justify-content: space-around;
+                padding: 10px 0;
+                z-index: 200;
+            }
+            .b-nav-item {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                font-size: 0.7rem;
+                color: #888;
+                border: none;
+                background: none;
+                gap: 4px;
+            }
+            .b-nav-item.active { color: var(--primary); }
+            .b-nav-item i { font-size: 1.2rem; }
+            
+            main { padding-bottom: 70px; } /* 하단 바 공간 확보 */
+        }
+        
+        @media (min-width: 601px) {
+            .bottom-nav { display: none; }
+        }
     </style>
 </head>
 <body>
 
-    <nav class="navbar">
-        <div class="logo" onclick="showPage('home')">
-            <i class="fa-solid fa-graduation-cap"></i> AI Grammar Quest
+    <header>
+        <div class="logo">
+            <i class="fa-solid fa-graduation-cap"></i>
+            <span>Major-AI Grammar</span>
         </div>
-        <ul class="nav-links">
-            <li onclick="showPage('home')" id="nav-home" class="active">홈</li>
-            <li onclick="showPage('map')" id="nav-map">문법 지도</li>
-            <li onclick="alert('준비 중인 기능입니다!')">명예의 전당</li>
-            <li onclick="alert('준비 중인 기능입니다!')">내 정보</li>
-        </ul>
+        <nav class="nav-tabs">
+            <button class="nav-btn active" onclick="switchTab('generator')">생성하기</button>
+            <button class="nav-btn" onclick="switchTab('submission')">제출/피드백</button>
+            <button class="nav-btn" onclick="switchTab('review')">복습 앱</button>
+        </nav>
+    </header>
+
+    <main>
+        <div id="view-generator" class="screen active">
+            <div class="control-panel">
+                <div class="section-title"><i class="fa-solid fa-sliders"></i> 학습 설정</div>
+                
+                <div class="select-group">
+                    <div>
+                        <label style="font-size:0.8rem; font-weight:bold;">전공 분야</label>
+                        <select id="majorSelect" onchange="generatePrompt()">
+                            <option value="architect">건축학 (Architecture)</option>
+                            <option value="nursing">간호학 (Nursing)</option>
+                            <option value="cs">컴퓨터공학 (CS)</option>
+                            <option value="biz">경영학 (Business)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="font-size:0.8rem; font-weight:bold;">문법 항목</label>
+                        <select id="grammarSelect" onchange="generatePrompt()">
+                            <option value="passive">수동태 (Passive Voice)</option>
+                            <option value="relative">관계대명사 (Relative Clauses)</option>
+                            <option value="to_inf">To 부정사 (To-Infinitive)</option>
+                            <option value="participle">분사구문 (Participle)</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <label style="font-size:0.8rem; font-weight:bold;">전공 핵심 키워드 (선택)</label>
+                <input type="text" id="keywordInput" placeholder="예: structure, load, concrete" oninput="generatePrompt()">
+            </div>
+
+            <div class="control-panel" style="background: #fdfdfd;">
+                <div class="section-title"><i class="fa-solid fa-robot"></i> 프롬프트 템플릿</div>
+                <div class="prompt-box" id="promptDisplay">
+                    </div>
+                
+                <button class="action-btn" onclick="copyPrompt()">
+                    <i class="fa-regular fa-copy"></i> 프롬프트 복사 & AI(ChatGPT)로 이동
+                </button>
+            </div>
+        </div>
+
+        <div id="view-submission" class="screen">
+            <div class="section-title"><i class="fa-solid fa-file-pen"></i> 학습 결과 제출</div>
+            <div class="guide-text">
+                <strong><i class="fa-solid fa-circle-info"></i> 제출 방법</strong><br>
+                1. AI가 생성한 예문과 문항을 복사하세요.<br>
+                2. 아래 댓글창에 <strong>[전공/문법]</strong> 말머리와 함께 붙여넣으세요.<br>
+                3. 본인이 해석한 내용이나 궁금한 점을 덧붙이세요.
+            </div>
+            
+            <div class="submission-area">
+                <div class="giscus"></div>
+            </div>
+        </div>
+
+        <div id="view-review" class="screen">
+            <div class="section-title">
+                <span><i class="fa-solid fa-mobile-screen"></i> 오늘의 전공 표현 (5)</span>
+                <span style="font-size:0.8rem; color:#888;">터치하여 정답 확인</span>
+            </div>
+
+            <div class="flashcard-container" id="cardContainer">
+                <div class="flashcard" onclick="this.classList.toggle('flipped')">
+                    <div class="card-tag">
+                        <span>건축학 (Architecture)</span>
+                        <i class="fa-regular fa-star"></i>
+                    </div>
+                    <div class="card-content">The load ________ by the column. (support)</div>
+                    <div class="card-answer">정답: is supported<br>해설: 주어(load)가 지지받는 대상이므로 수동태 사용</div>
+                </div>
+
+                <div class="flashcard" onclick="this.classList.toggle('flipped')">
+                    <div class="card-tag">
+                        <span>간호학 (Nursing)</span>
+                        <i class="fa-regular fa-star"></i>
+                    </div>
+                    <div class="card-content">Patients ________ symptoms should report immediately. (show)</div>
+                    <div class="card-answer">정답: showing<br>해설: 환자가 증상을 능동적으로 보이므로 현재분사(ing) 수식</div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <nav class="bottom-nav">
+        <button class="b-nav-item active" onclick="switchTab('generator')" id="m-nav-generator">
+            <i class="fa-solid fa-wand-magic-sparkles"></i>
+            <span>생성</span>
+        </button>
+        <button class="b-nav-item" onclick="switchTab('submission')" id="m-nav-submission">
+            <i class="fa-solid fa-pen-to-square"></i>
+            <span>제출</span>
+        </button>
+        <button class="b-nav-item" onclick="switchTab('review')" id="m-nav-review">
+            <i class="fa-solid fa-layer-group"></i>
+            <span>복습</span>
+        </button>
     </nav>
 
-    <section id="page-home" class="page-section active">
-        <div class="hero">
-            <h1>AI와 함께하는 영어 정복!</h1>
-            <p>나만의 AI 선생님과 함께 예문을 만들고,<br>문법 지도를 하나씩 완성해보세요.</p>
-            <button class="cta-btn" onclick="showPage('map')">지도 채우러 가기 🚀</button>
-        </div>
-        
-        <div style="margin-top: 40px; text-align: center;">
-            <h2>💡 학습 방법</h2>
-            <div style="display: flex; justify-content: center; gap: 20px; margin-top: 20px; flex-wrap: wrap;">
-                <div style="background: white; padding: 20px; border-radius: 15px; width: 200px; box-shadow: 0 5px 10px rgba(0,0,0,0.05);">
-                    <i class="fa-solid fa-robot" style="font-size: 2rem; color: #6c5ce7; margin-bottom: 10px;"></i>
-                    <h3>1. AI에게 질문</h3>
-                    <p style="font-size: 0.9rem;">주제별 예문을<br>생성해달라고 하세요.</p>
-                </div>
-                <div style="background: white; padding: 20px; border-radius: 15px; width: 200px; box-shadow: 0 5px 10px rgba(0,0,0,0.05);">
-                    <i class="fa-solid fa-pen-to-square" style="font-size: 2rem; color: #00b894; margin-bottom: 10px;"></i>
-                    <h3>2. 기록 & 공유</h3>
-                    <p style="font-size: 0.9rem;">생성된 예문을<br>사이트에 기록하세요.</p>
-                </div>
-                <div style="background: white; padding: 20px; border-radius: 15px; width: 200px; box-shadow: 0 5px 10px rgba(0,0,0,0.05);">
-                    <i class="fa-solid fa-trophy" style="font-size: 2rem; color: #fab1a0; margin-bottom: 10px;"></i>
-                    <h3>3. 지도 완성</h3>
-                    <p style="font-size: 0.9rem;">도장을 모아<br>지도를 채워보세요!</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section id="page-map" class="page-section">
-        <div class="map-header">
-            <h2>🗺️ 나의 문법 정복 지도</h2>
-            <div class="progress-container">
-                <div class="progress-bar" id="progressBar">0%</div>
-            </div>
-        </div>
-
-        <div class="map-grid">
-            <div class="island locked" onclick="openModal('topic1', '현재완료 시제')" id="island-topic1">
-                <i class="fa-solid fa-hourglass-half"></i><h3>현재완료 시제</h3><span class="status-badge" id="badge-topic1">미개척</span>
-            </div>
-            <div class="island locked" onclick="openModal('topic2', 'To 부정사')" id="island-topic2">
-                <i class="fa-solid fa-rocket"></i><h3>To 부정사</h3><span class="status-badge" id="badge-topic2">미개척</span>
-            </div>
-            <div class="island locked" onclick="openModal('topic3', '동명사')" id="island-topic3">
-                <i class="fa-solid fa-bicycle"></i><h3>동명사</h3><span class="status-badge" id="badge-topic3">미개척</span>
-            </div>
-            <div class="island locked" onclick="openModal('topic4', '관계대명사')" id="island-topic4">
-                <i class="fa-solid fa-link"></i><h3>관계대명사</h3><span class="status-badge" id="badge-topic4">미개척</span>
-            </div>
-            <div class="island locked" onclick="openModal('topic5', '가정법 과거')" id="island-topic5">
-                <i class="fa-solid fa-wand-magic-sparkles"></i><h3>가정법 과거</h3><span class="status-badge" id="badge-topic5">미개척</span>
-            </div>
-            <div class="island locked" onclick="openModal('topic6', '분사구문')" id="island-topic6">
-                <i class="fa-solid fa-wind"></i><h3>분사구문</h3><span class="status-badge" id="badge-topic6">미개척</span>
-            </div>
-        </div>
-    </section>
-
-    <div id="questModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 id="modalTitle" style="margin:0;">주제</h2>
-                <span class="close-btn" onclick="closeModal()">&times;</span>
-            </div>
-            <div class="modal-body">
-                <div style="background:#f8f9fa; padding:15px; border-radius:10px; margin-bottom:20px;">
-                    <strong>🤖 AI 프롬프트 (클릭하여 복사):</strong>
-                    <div class="code-block" onclick="copyPrompt()" id="aiPrompt">로딩중...</div>
-                </div>
-                <div class="giscus-frame"><section class="giscus"></section></div>
-                <button class="complete-btn" onclick="markCompleted()">🚩 미션 완료!</button>
-            </div>
-        </div>
-    </div>
-
     <script>
-        // --- 1. 페이지 이동 기능 (SPA 방식) ---
-        function showPage(pageId) {
-            // 모든 섹션 숨기기
-            document.querySelectorAll('.page-section').forEach(section => {
-                section.classList.remove('active');
-            });
-            // 선택한 섹션 보이기
-            document.getElementById('page-' + pageId).classList.add('active');
+        // --- 1. 탭 전환 로직 ---
+        function switchTab(tabId) {
+            // 화면 전환
+            document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'));
+            document.getElementById('view-' + tabId).classList.add('active');
 
-            // 메뉴 활성화 표시 변경
-            document.querySelectorAll('.nav-links li').forEach(li => {
-                li.classList.remove('active');
-            });
-            if(pageId === 'home') document.getElementById('nav-home').classList.add('active');
-            if(pageId === 'map') document.getElementById('nav-map').classList.add('active');
+            // PC 상단 버튼 활성화
+            document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+            // (간단 구현을 위해 인덱스로 매칭하거나, 요소를 직접 찾음)
+            if(tabId === 'generator') document.querySelectorAll('.nav-btn')[0].classList.add('active');
+            if(tabId === 'submission') document.querySelectorAll('.nav-btn')[1].classList.add('active');
+            if(tabId === 'review') document.querySelectorAll('.nav-btn')[2].classList.add('active');
+
+            // 모바일 하단 버튼 활성화
+            document.querySelectorAll('.b-nav-item').forEach(el => el.classList.remove('active'));
+            document.getElementById('m-nav-' + tabId).classList.add('active');
         }
 
-        // --- 2. 문법 지도 로직 (이전과 동일) ---
-        let currentTopicId = '';
-        const totalTopics = 6;
+        // --- 2. 프롬프트 생성 로직 (기획서 반영) ---
+        function generatePrompt() {
+            const majorMap = {
+                'architect': 'Architecture (건축학개론)',
+                'nursing': 'Nursing (성인간호학)',
+                'cs': 'Computer Science (운영체제)',
+                'biz': 'Business (경영학원론)'
+            };
+            const grammarMap = {
+                'passive': 'Passive Voice (수동태)',
+                'relative': 'Relative Clauses (관계대명사)',
+                'to_inf': 'To-Infinitive (To 부정사)',
+                'participle': 'Participle Phrases (분사구문)'
+            };
 
-        window.onload = function() {
-            updateMapDisplay();
-        };
+            const major = document.getElementById('majorSelect').value;
+            const grammar = document.getElementById('grammarSelect').value;
+            const keyword = document.getElementById('keywordInput').value || '[관련 키워드 없음]';
 
-        function updateMapDisplay() {
-            let completedCount = 0;
-            for (let i = 1; i <= totalTopics; i++) {
-                const topicId = 'topic' + i;
-                const status = localStorage.getItem(topicId);
-                const island = document.getElementById('island-' + topicId);
-                const badge = document.getElementById('badge-' + topicId);
-                if (status === 'completed') {
-                    island.classList.remove('locked');
-                    island.classList.add('conquered');
-                    badge.innerText = "정복 완료";
-                    completedCount++;
-                }
-            }
-            const percent = Math.round((completedCount / totalTopics) * 100);
-            document.getElementById('progressBar').style.width = percent + '%';
-            document.getElementById('progressBar').innerText = percent + '% 정복';
-        }
+            const template = `Act as an English Professor in ${majorMap[major]}.
+I want to practice English grammar, specifically "${grammarMap[major]}".
 
-        function openModal(id, title) {
-            currentTopicId = id;
-            document.getElementById('modalTitle').innerText = title;
-            document.getElementById('aiPrompt').innerText = `"${title}" 문법을 사용한 실생활 영어 예문 3개를 만들고, 한국어 해석과 설명을 덧붙여줘.`;
-            document.getElementById('questModal').style.display = "block";
-            loadGiscus(id);
-        }
+Please generate a learning material following these steps:
 
-        function closeModal() {
-            document.getElementById('questModal').style.display = "none";
-            document.querySelector('.giscus-frame').innerHTML = '<section class="giscus"></section>';
-        }
+1. **Vocabulary:** List 5 key terms related to ${majorMap[major]} (e.g., related to "${keyword}").
+2. **Examples:** Create 5 sentences using these terms that demonstrate "${grammarMap[major]}".
+3. **Quiz:** Create 3 fill-in-the-blank questions based on the examples.
+4. **Writing Task:** Ask me to write a short paragraph (3 sentences) summarizing a concept in my major using this grammar point.
 
-        function markCompleted() {
-            if(!currentTopicId) return;
-            localStorage.setItem(currentTopicId, 'completed');
-            alert("축하합니다! 지도의 색이 채워집니다. 🎉");
-            closeModal();
-            updateMapDisplay();
+Make the difficulty suitable for a college freshman (A2-B1 level).`;
+
+            document.getElementById('promptDisplay').innerText = template;
         }
 
         function copyPrompt() {
-            const text = document.getElementById('aiPrompt').innerText;
-            navigator.clipboard.writeText(text).then(() => alert("프롬프트 복사 완료!"));
+            const text = document.getElementById('promptDisplay').innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                alert("프롬프트가 복사되었습니다! AI(ChatGPT/Gemini)에 붙여넣으세요.");
+            });
         }
 
-        // ★★★ Giscus 설정 (여기에 본인 ID 다시 넣어주세요!) ★★★
-        function loadGiscus(term) {
+        // --- 3. Giscus 로드 (본인 정보 수정 필수) ---
+        // 페이지 로드 시 바로 실행됨
+        (function loadGiscus() {
             const script = document.createElement('script');
             script.src = "https://giscus.app/client.js";
             
-            // ⬇️ 아까 설정했던 본인 정보를 여기에 다시 넣어주세요! ⬇️
-            script.setAttribute("data-repo", "본인아이디/저장소이름");
+            // ★★★ 아래 정보를 본인 Giscus 설정값으로 교체하세요 ★★★
+            script.setAttribute("data-repo", "본인아이디/저장소명");
             script.setAttribute("data-repo-id", "R_kgDOL..."); 
             script.setAttribute("data-category", "General");
             script.setAttribute("data-category-id", "DIC_kwDOL...");
-            // ⬆️ ------------------------------------------- ⬆️
+            // ----------------------------------------------------
 
-            script.setAttribute("data-mapping", "specific");
-            script.setAttribute("data-term", term);
+            script.setAttribute("data-mapping", "pathname");
             script.setAttribute("data-strict", "0");
             script.setAttribute("data-reactions-enabled", "1");
             script.setAttribute("data-emit-metadata", "0");
@@ -429,14 +477,13 @@
             script.crossOrigin = "anonymous";
             script.async = true;
 
-            const giscusFrame = document.querySelector('.giscus-frame');
-            giscusFrame.innerHTML = ''; 
-            giscusFrame.appendChild(script);
-        }
+            const giscusArea = document.querySelector('.giscus');
+            if(giscusArea) giscusArea.appendChild(script);
+        })();
 
-        window.onclick = function(event) {
-            if (event.target == document.getElementById('questModal')) closeModal();
-        }
+        // 초기 실행
+        generatePrompt();
+
     </script>
 </body>
 </html>
