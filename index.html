@@ -3,70 +3,138 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Grammar Quest Map</title>
+    <title>AI Grammar Quest</title>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
 
     <style>
-        /* --- 1. 디자인 스타일 (CSS) --- */
+        /* --- 기본 설정 --- */
         :root {
             --primary-color: #6c5ce7;
             --secondary-color: #a29bfe;
             --bg-color: #dfe6e9;
-            --island-bg: #ffffff;
             --text-color: #2d3436;
         }
 
         body {
             font-family: 'Noto Sans KR', sans-serif;
-            background-color: var(--bg-color);
-            background-image: radial-gradient(#b2bec3 1px, transparent 1px);
-            background-size: 20px 20px;
             margin: 0;
             padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
+
+        /* --- 1. 네비게이션 바 (메뉴) --- */
+        .navbar {
             display: flex;
-            justify-content: center;
-            min-height: 100vh;
+            justify-content: space-between;
+            align-items: center;
+            background-color: white;
+            padding: 15px 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
-        .container {
-            width: 100%;
-            max-width: 900px;
-            padding: 20px;
-        }
-
-        /* 헤더 영역 */
-        header {
-            text-align: center;
-            margin-bottom: 40px;
-            background: white;
-            padding: 30px;
-            border-radius: 20px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-        }
-
-        h1 {
+        .logo {
             font-family: 'Jua', sans-serif;
+            font-size: 1.5rem;
             color: var(--primary-color);
-            font-size: 2.5rem;
-            margin: 0 0 10px 0;
+            cursor: pointer;
         }
 
-        .subtitle {
+        .nav-links {
+            list-style: none;
+            display: flex;
+            gap: 20px;
+            margin: 0;
+            padding: 0;
+        }
+
+        .nav-links li {
+            cursor: pointer;
+            font-weight: bold;
             color: #636e72;
+            transition: color 0.3s;
+        }
+
+        .nav-links li:hover, .nav-links li.active {
+            color: var(--primary-color);
+        }
+
+        /* --- 2. 페이지 섹션 공통 --- */
+        .page-section {
+            display: none; /* 기본적으로 숨김 */
+            padding: 40px 20px;
+            max-width: 1000px;
+            margin: 0 auto;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .page-section.active {
+            display: block; /* 활성화된 페이지만 보임 */
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- 3. 홈 화면 (Hero Section) --- */
+        .hero {
+            text-align: center;
+            padding: 80px 20px;
+            background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
+            color: white;
+            border-radius: 20px;
+            margin-top: 20px;
+            box-shadow: 0 10px 20px rgba(108, 92, 231, 0.2);
+        }
+
+        .hero h1 {
+            font-family: 'Jua', sans-serif;
+            font-size: 3rem;
             margin-bottom: 20px;
         }
 
-        /* 프로그레스 바 */
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 40px;
+            opacity: 0.9;
+        }
+
+        .cta-btn {
+            background-color: white;
+            color: var(--primary-color);
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .cta-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        /* --- 4. 문법 지도 스타일 (기존 코드 유지) --- */
+        .map-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
         .progress-container {
-            background-color: #f1f2f6;
+            background-color: #dcdde1;
             border-radius: 50px;
             height: 25px;
             width: 80%;
-            margin: 0 auto;
+            margin: 20px auto;
             overflow: hidden;
-            border: 2px solid #dfe4ea;
             position: relative;
         }
 
@@ -83,46 +151,34 @@
             font-weight: bold;
         }
 
-        /* 지도 (그리드 레이아웃) */
         .map-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
             gap: 25px;
-            padding: 20px;
         }
 
-        /* 문법 섬 (카드) */
         .island {
-            background: var(--island-bg);
+            background: white;
             border-radius: 20px;
-            padding: 20px;
+            padding: 30px 20px;
             text-align: center;
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            border: 3px solid transparent;
+            transition: all 0.3s;
             box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-            position: relative;
-            overflow: hidden;
+            border: 3px solid transparent;
         }
 
-        /* 정복 전 상태: 회색조 */
         .island.locked {
             filter: grayscale(100%);
-            opacity: 0.8;
+            opacity: 0.7;
             border: 3px dashed #b2bec3;
         }
 
-        /* 정복 후 상태: 컬러 풀 & 효과 */
         .island.conquered {
-            filter: grayscale(0%);
-            opacity: 1;
             border: 3px solid var(--primary-color);
+            background-color: #fff;
             transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(108, 92, 231, 0.3);
-        }
-
-        .island:hover {
-            transform: scale(1.05);
+            box-shadow: 0 10px 25px rgba(108, 92, 231, 0.2);
         }
 
         .island i {
@@ -130,20 +186,13 @@
             margin-bottom: 15px;
             display: block;
         }
-        
-        /* 아이콘 색상 지정 */
+
         .island:nth-child(1) i { color: #e17055; }
         .island:nth-child(2) i { color: #00b894; }
         .island:nth-child(3) i { color: #0984e3; }
         .island:nth-child(4) i { color: #6c5ce7; }
         .island:nth-child(5) i { color: #fdcb6e; }
         .island:nth-child(6) i { color: #e84393; }
-
-        .island h3 {
-            margin: 0;
-            color: var(--text-color);
-            font-size: 1.1rem;
-        }
 
         .status-badge {
             display: inline-block;
@@ -153,11 +202,10 @@
             font-size: 0.8rem;
             font-weight: bold;
         }
-
         .locked .status-badge { background: #b2bec3; color: white; }
         .conquered .status-badge { background: var(--primary-color); color: white; }
 
-        /* 모달 (팝업창) */
+        /* 모달 스타일 */
         .modal {
             display: none;
             position: fixed;
@@ -177,175 +225,149 @@
             width: 90%;
             max-width: 800px;
             border-radius: 20px;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.2);
-            animation: slideUp 0.4s ease;
             max-height: 90vh;
             overflow-y: auto;
-        }
-
-        @keyframes slideUp {
-            from { transform: translateY(50px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
         }
 
         .modal-header {
             background: linear-gradient(135deg, #6c5ce7, #a29bfe);
             padding: 20px;
             color: white;
-            border-radius: 20px 20px 0 0;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
-        .modal-body {
-            padding: 30px;
-        }
-
-        .ai-prompt-box {
-            background: #f8f9fa;
-            border-left: 5px solid #00b894;
-            padding: 15px;
-            margin-bottom: 25px;
-            font-size: 0.95rem;
-        }
-
-        .code-block {
-            background: #2d3436;
-            color: #fab1a0;
-            padding: 10px;
-            border-radius: 5px;
-            font-family: monospace;
-            display: block;
-            margin-top: 10px;
-            cursor: pointer;
-        }
-
-        .close-btn {
-            color: white;
-            font-size: 28px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        .complete-btn {
-            background-color: #00b894;
-            color: white;
-            border: none;
-            padding: 15px;
-            width: 100%;
-            font-size: 1.1rem;
-            border-radius: 10px;
-            cursor: pointer;
-            margin-top: 20px;
-            transition: background 0.3s;
-        }
-        
-        .complete-btn:hover { background-color: #00cec9; }
-
-        /* Giscus 댓글창 스타일 조정 */
-        .giscus { margin-top: 30px; }
+        .modal-body { padding: 30px; }
+        .code-block { background: #2d3436; color: #fab1a0; padding: 10px; border-radius: 5px; cursor: pointer; margin-top: 10px; }
+        .complete-btn { background-color: #00b894; color: white; border: none; padding: 15px; width: 100%; border-radius: 10px; cursor: pointer; margin-top: 20px; font-size: 1.1rem; }
+        .close-btn { cursor: pointer; font-size: 1.5rem; }
 
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <header>
-            <h1>🗺️ AI Grammar Quest</h1>
-            <p class="subtitle">AI와 함께 문법 예문을 만들고 지도를 완성하세요!</p>
-            
+    <nav class="navbar">
+        <div class="logo" onclick="showPage('home')">
+            <i class="fa-solid fa-graduation-cap"></i> AI Grammar Quest
+        </div>
+        <ul class="nav-links">
+            <li onclick="showPage('home')" id="nav-home" class="active">홈</li>
+            <li onclick="showPage('map')" id="nav-map">문법 지도</li>
+            <li onclick="alert('준비 중인 기능입니다!')">명예의 전당</li>
+            <li onclick="alert('준비 중인 기능입니다!')">내 정보</li>
+        </ul>
+    </nav>
+
+    <section id="page-home" class="page-section active">
+        <div class="hero">
+            <h1>AI와 함께하는 영어 정복!</h1>
+            <p>나만의 AI 선생님과 함께 예문을 만들고,<br>문법 지도를 하나씩 완성해보세요.</p>
+            <button class="cta-btn" onclick="showPage('map')">지도 채우러 가기 🚀</button>
+        </div>
+        
+        <div style="margin-top: 40px; text-align: center;">
+            <h2>💡 학습 방법</h2>
+            <div style="display: flex; justify-content: center; gap: 20px; margin-top: 20px; flex-wrap: wrap;">
+                <div style="background: white; padding: 20px; border-radius: 15px; width: 200px; box-shadow: 0 5px 10px rgba(0,0,0,0.05);">
+                    <i class="fa-solid fa-robot" style="font-size: 2rem; color: #6c5ce7; margin-bottom: 10px;"></i>
+                    <h3>1. AI에게 질문</h3>
+                    <p style="font-size: 0.9rem;">주제별 예문을<br>생성해달라고 하세요.</p>
+                </div>
+                <div style="background: white; padding: 20px; border-radius: 15px; width: 200px; box-shadow: 0 5px 10px rgba(0,0,0,0.05);">
+                    <i class="fa-solid fa-pen-to-square" style="font-size: 2rem; color: #00b894; margin-bottom: 10px;"></i>
+                    <h3>2. 기록 & 공유</h3>
+                    <p style="font-size: 0.9rem;">생성된 예문을<br>사이트에 기록하세요.</p>
+                </div>
+                <div style="background: white; padding: 20px; border-radius: 15px; width: 200px; box-shadow: 0 5px 10px rgba(0,0,0,0.05);">
+                    <i class="fa-solid fa-trophy" style="font-size: 2rem; color: #fab1a0; margin-bottom: 10px;"></i>
+                    <h3>3. 지도 완성</h3>
+                    <p style="font-size: 0.9rem;">도장을 모아<br>지도를 채워보세요!</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="page-map" class="page-section">
+        <div class="map-header">
+            <h2>🗺️ 나의 문법 정복 지도</h2>
             <div class="progress-container">
                 <div class="progress-bar" id="progressBar">0%</div>
             </div>
-        </header>
+        </div>
 
         <div class="map-grid">
             <div class="island locked" onclick="openModal('topic1', '현재완료 시제')" id="island-topic1">
-                <i class="fa-solid fa-hourglass-half"></i>
-                <h3>현재완료 시제</h3>
-                <span class="status-badge" id="badge-topic1">미개척</span>
+                <i class="fa-solid fa-hourglass-half"></i><h3>현재완료 시제</h3><span class="status-badge" id="badge-topic1">미개척</span>
             </div>
-
             <div class="island locked" onclick="openModal('topic2', 'To 부정사')" id="island-topic2">
-                <i class="fa-solid fa-rocket"></i>
-                <h3>To 부정사</h3>
-                <span class="status-badge" id="badge-topic2">미개척</span>
+                <i class="fa-solid fa-rocket"></i><h3>To 부정사</h3><span class="status-badge" id="badge-topic2">미개척</span>
             </div>
-
             <div class="island locked" onclick="openModal('topic3', '동명사')" id="island-topic3">
-                <i class="fa-solid fa-bicycle"></i>
-                <h3>동명사</h3>
-                <span class="status-badge" id="badge-topic3">미개척</span>
+                <i class="fa-solid fa-bicycle"></i><h3>동명사</h3><span class="status-badge" id="badge-topic3">미개척</span>
             </div>
-
             <div class="island locked" onclick="openModal('topic4', '관계대명사')" id="island-topic4">
-                <i class="fa-solid fa-link"></i>
-                <h3>관계대명사</h3>
-                <span class="status-badge" id="badge-topic4">미개척</span>
+                <i class="fa-solid fa-link"></i><h3>관계대명사</h3><span class="status-badge" id="badge-topic4">미개척</span>
             </div>
-
             <div class="island locked" onclick="openModal('topic5', '가정법 과거')" id="island-topic5">
-                <i class="fa-solid fa-wand-magic-sparkles"></i>
-                <h3>가정법 과거</h3>
-                <span class="status-badge" id="badge-topic5">미개척</span>
+                <i class="fa-solid fa-wand-magic-sparkles"></i><h3>가정법 과거</h3><span class="status-badge" id="badge-topic5">미개척</span>
             </div>
-
             <div class="island locked" onclick="openModal('topic6', '분사구문')" id="island-topic6">
-                <i class="fa-solid fa-wind"></i>
-                <h3>분사구문</h3>
-                <span class="status-badge" id="badge-topic6">미개척</span>
+                <i class="fa-solid fa-wind"></i><h3>분사구문</h3><span class="status-badge" id="badge-topic6">미개척</span>
             </div>
         </div>
-    </div>
+    </section>
 
     <div id="questModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 id="modalTitle" style="margin:0;">주제 제목</h2>
+                <h2 id="modalTitle" style="margin:0;">주제</h2>
                 <span class="close-btn" onclick="closeModal()">&times;</span>
             </div>
             <div class="modal-body">
-                <div class="ai-prompt-box">
-                    <strong>🤖 AI에게 이렇게 물어보세요:</strong>
-                    <div class="code-block" onclick="copyPrompt()" id="aiPrompt">
-                        프롬프트 내용 로딩중...
-                    </div>
-                    <small style="color:#888;">(클릭하면 복사됩니다)</small>
+                <div style="background:#f8f9fa; padding:15px; border-radius:10px; margin-bottom:20px;">
+                    <strong>🤖 AI 프롬프트 (클릭하여 복사):</strong>
+                    <div class="code-block" onclick="copyPrompt()" id="aiPrompt">로딩중...</div>
                 </div>
-
-                <p>AI가 만든 예문을 아래 댓글창에 <strong>Login</strong> 후 등록해주세요. 친구들의 예문도 볼 수 있습니다.</p>
-                
-                <div class="giscus-frame">
-                    <section class="giscus"></section>
-                </div>
-
-                <button class="complete-btn" onclick="markCompleted()">🚩 미션 완료! (지도 색칠하기)</button>
+                <div class="giscus-frame"><section class="giscus"></section></div>
+                <button class="complete-btn" onclick="markCompleted()">🚩 미션 완료!</button>
             </div>
         </div>
     </div>
 
     <script>
-        /* --- 2. 기능 로직 (JavaScript) --- */
+        // --- 1. 페이지 이동 기능 (SPA 방식) ---
+        function showPage(pageId) {
+            // 모든 섹션 숨기기
+            document.querySelectorAll('.page-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            // 선택한 섹션 보이기
+            document.getElementById('page-' + pageId).classList.add('active');
 
+            // 메뉴 활성화 표시 변경
+            document.querySelectorAll('.nav-links li').forEach(li => {
+                li.classList.remove('active');
+            });
+            if(pageId === 'home') document.getElementById('nav-home').classList.add('active');
+            if(pageId === 'map') document.getElementById('nav-map').classList.add('active');
+        }
+
+        // --- 2. 문법 지도 로직 (이전과 동일) ---
         let currentTopicId = '';
         const totalTopics = 6;
 
-        // 페이지 로드 시: 저장된 진행상황 불러오기
         window.onload = function() {
             updateMapDisplay();
         };
 
-        // 지도 상태 업데이트 (색칠하기)
         function updateMapDisplay() {
             let completedCount = 0;
-
             for (let i = 1; i <= totalTopics; i++) {
                 const topicId = 'topic' + i;
                 const status = localStorage.getItem(topicId);
                 const island = document.getElementById('island-' + topicId);
                 const badge = document.getElementById('badge-' + topicId);
-
                 if (status === 'completed') {
                     island.classList.remove('locked');
                     island.classList.add('conquered');
@@ -353,73 +375,51 @@
                     completedCount++;
                 }
             }
-
-            // 프로그레스 바 업데이트
             const percent = Math.round((completedCount / totalTopics) * 100);
-            const bar = document.getElementById('progressBar');
-            bar.style.width = percent + '%';
-            bar.innerText = percent + '% 정복';
+            document.getElementById('progressBar').style.width = percent + '%';
+            document.getElementById('progressBar').innerText = percent + '% 정복';
         }
 
-        // 모달 열기
         function openModal(id, title) {
             currentTopicId = id;
-            const modal = document.getElementById('questModal');
             document.getElementById('modalTitle').innerText = title;
-            
-            // 프롬프트 자동 생성
-            const promptText = `"${title}" 문법을 사용한 실생활 영어 예문 3개를 만들고, 한국어 해석과 문법 설명을 덧붙여줘.`;
-            document.getElementById('aiPrompt').innerText = promptText;
-
-            modal.style.display = "block";
-
-            // ★ Giscus(댓글창) 다시 로드하기 (주제별로 다르게 뜨게 하기 위함)
+            document.getElementById('aiPrompt').innerText = `"${title}" 문법을 사용한 실생활 영어 예문 3개를 만들고, 한국어 해석과 설명을 덧붙여줘.`;
+            document.getElementById('questModal').style.display = "block";
             loadGiscus(id);
         }
 
-        // 모달 닫기
         function closeModal() {
             document.getElementById('questModal').style.display = "none";
-            // 댓글창 초기화 (성능 최적화)
-            const giscusFrame = document.querySelector('.giscus-frame');
-            giscusFrame.innerHTML = '<section class="giscus"></section>';
+            document.querySelector('.giscus-frame').innerHTML = '<section class="giscus"></section>';
         }
 
-        // 완료 버튼 클릭 시
         function markCompleted() {
             if(!currentTopicId) return;
-            
-            // 로컬 저장소에 기록
             localStorage.setItem(currentTopicId, 'completed');
-            
             alert("축하합니다! 지도의 색이 채워집니다. 🎉");
             closeModal();
-            updateMapDisplay(); // 지도 갱신
+            updateMapDisplay();
         }
 
-        // 프롬프트 복사 기능
         function copyPrompt() {
             const text = document.getElementById('aiPrompt').innerText;
-            navigator.clipboard.writeText(text).then(() => {
-                alert("프롬프트가 복사되었습니다! AI에게 붙여넣으세요.");
-            });
+            navigator.clipboard.writeText(text).then(() => alert("프롬프트 복사 완료!"));
         }
 
-        // ★★★ [중요] Giscus 연동 스크립트 ★★★
-        // 아래 함수에서 본인의 Giscus 설정값으로 반드시 변경해야 합니다.
+        // ★★★ Giscus 설정 (여기에 본인 ID 다시 넣어주세요!) ★★★
         function loadGiscus(term) {
             const script = document.createElement('script');
             script.src = "https://giscus.app/client.js";
             
-            // ⬇️ 여기 아래 값들을 Giscus 사이트에서 받은 값으로 교체하세요 ⬇️
-            script.setAttribute("data-repo", "YOUR_GITHUB_ID/YOUR_REPO_NAME"); // 예: gildong/grammar-map
-            script.setAttribute("data-repo-id", "R_kgDOLxxxxxxx"); 
+            // ⬇️ 아까 설정했던 본인 정보를 여기에 다시 넣어주세요! ⬇️
+            script.setAttribute("data-repo", "본인아이디/저장소이름");
+            script.setAttribute("data-repo-id", "R_kgDOL..."); 
             script.setAttribute("data-category", "General");
-            script.setAttribute("data-category-id", "DIC_kwDOLxxxxxxx");
-            // ⬆️ --------------------------------------------------- ⬆️
+            script.setAttribute("data-category-id", "DIC_kwDOL...");
+            // ⬆️ ------------------------------------------- ⬆️
 
             script.setAttribute("data-mapping", "specific");
-            script.setAttribute("data-term", term); // 주제별로 댓글을 분리하는 핵심 키
+            script.setAttribute("data-term", term);
             script.setAttribute("data-strict", "0");
             script.setAttribute("data-reactions-enabled", "1");
             script.setAttribute("data-emit-metadata", "0");
@@ -429,18 +429,13 @@
             script.crossOrigin = "anonymous";
             script.async = true;
 
-            // 기존 댓글창 지우고 새로 끼워넣기
             const giscusFrame = document.querySelector('.giscus-frame');
             giscusFrame.innerHTML = ''; 
             giscusFrame.appendChild(script);
         }
 
-        // 배경 클릭시 모달 닫기
         window.onclick = function(event) {
-            const modal = document.getElementById('questModal');
-            if (event.target == modal) {
-                closeModal();
-            }
+            if (event.target == document.getElementById('questModal')) closeModal();
         }
     </script>
 </body>
