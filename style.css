@@ -9,40 +9,26 @@
 body { margin: 0; font-family: 'Pretendard', sans-serif; background: var(--bg); color: var(--text); }
 a { text-decoration: none; color: inherit; }
 
-/* ★★★ 공통 헤더 수정됨 (메뉴 가운데 정렬) ★★★ */
+/* 공통 헤더 (메뉴 중앙 정렬 + 홈 버튼 왼쪽 고정) */
 .app-header {
     background: white; padding: 15px 20px; 
-    
-    /* 기존 space-between을 center로 변경 */
-    display: flex; 
-    justify-content: center; 
-    align-items: center; 
-    
-    border-bottom: 1px solid #ddd; 
-    position: sticky; 
-    top: 0; 
-    z-index: 100;
-    
-    /* 홈 버튼 위치 잡기 위한 기준점 */
+    display: flex; justify-content: center; align-items: center; 
+    border-bottom: 1px solid #ddd; position: sticky; top: 0; z-index: 100;
     position: relative; 
 }
-
 .home-btn { 
-    font-size: 1.2rem; 
-    color: var(--primary);
-    
-    /* 홈 버튼만 왼쪽 구석으로 강제 이동 */
-    position: absolute;
-    left: 20px;
+    font-size: 1.2rem; color: var(--primary);
+    position: absolute; left: 20px;
 }
-
 .nav-links { display: flex; gap: 10px; }
 .nav-link {
-    padding: 8px 12px; background: #eee; border-radius: 8px; font-weight: 600; color: #777; font-size: 0.9rem;
+    padding: 8px 16px; background: #f1f3f5; border-radius: 20px; 
+    font-weight: 600; color: #555; font-size: 0.9rem; transition: all 0.2s;
 }
+.nav-link:hover { background: #e9ecef; color: var(--primary); }
 .nav-link.active { background: var(--primary); color: white; }
 
-/* 메인 화면 (index.html 전용) */
+/* 메인 화면 (index.html) */
 .hero-container {
     display: flex; flex-direction: column; justify-content: center; align-items: center;
     text-align: center; padding: 40px 20px;
@@ -61,7 +47,7 @@ a { text-decoration: none; color: inherit; }
 }
 .start-btn:hover { transform: translateY(-3px); }
 
-/* 콘텐츠 영역 */
+/* 콘텐츠 영역 공통 */
 .container { max-width: 800px; margin: 0 auto; padding: 20px; padding-bottom: 80px; }
 .panel { background: white; padding: 20px; border-radius: 12px; border: 1px solid #eee; margin-bottom: 20px; }
 select, input { width: 100%; padding: 12px; margin: 5px 0 15px 0; border: 1px solid #ddd; border-radius: 6px; font-size: 1rem; }
