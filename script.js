@@ -159,3 +159,52 @@ function loadGiscus(term) {
     script.async = true;
     container.appendChild(script);
 }
+
+// 본인의 API 키를 여기에 입력하세요
+const GEMINI_API_KEY = "AIzaSyBxnj8lNrrQSc_tXYWYwEF1NkWgfnZwRlc"; 
+
+async function askGemini() {
+    const promptText = document.getElementById('promptDisplay').innerText;
+    const responseDisplay = document.getElementById('apiResponse');
+    const resultPanel = document.getElementById('resultPanel');
+    const btn = document.getElementById('generateBtn');
+
+    if (promptText === "Loading..." || promptText === "조건을 선택하세요...") {
+        alert("먼저 학습 조건을 설정해주세요!");
+        return;
+    }
+
+    // 상태 업데이트
+    resultPanel.style.display = "block";
+    responseDisplay.innerText = "AI가 답변을 생성하고 있습니다. 잠시만 기다려주세요...";
+    btn.disabled = true;
+
+    try {
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                contents: [{
+                    parts: [{ text: promptText }]
+                }]
+            })
+        });
+
+        const data = await response.json();
+        
+        if (data.candidates && data.candidates[0].content.parts[0].text) {
+            const aiResult = data.candidates[0].content.parts[0].text;
+            // 결과를 화면에 출력
+            responseDisplay.innerText = aiResult;
+        } else {
+            responseDisplay.innerText = "답변을 가져오지 못했습니다. 다시 시도해주세요.";
+        }
+    } catch (error) {
+        console.error("Error:", error);
+        responseDisplay.innerText = "오류가 발생했습니다: " + error.message;
+    } finally {
+        btn.disabled = false;
+    }
+}
