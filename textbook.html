@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>나만의 문법 교재</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="app-header no-print">
+        <a href="index.html" class="home-btn"><i class="fa-solid fa-house"></i></a>
+        <nav class="nav-links">
+            <a href="generator.html" class="nav-link">생성기</a>
+            <a href="submission.html" class="nav-link">과제제출</a>
+            <a href="quiz.html" class="nav-link">Quiz</a>
+            <a href="textbook.html" class="nav-link active">My교재</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <div class="panel no-print" style="text-align:center; background:#f8f9fa;">
+            <h3><i class="fa-solid fa-book"></i> 나만의 전공 영문법 교재 만들기</h3>
+            <p style="font-size:0.9rem; color:#666; margin-bottom:20px;">
+                생성기에서 만든 예문 중 가장 좋은 것을 복사해 이곳에 정리하세요.<br>
+                작성이 끝나면 [PDF로 저장] 버튼을 눌러 제출용 파일을 만드세요.
+            </p>
+            <button onclick="window.print()" class="start-btn" style="font-size:1rem; padding:10px 30px;">
+                <i class="fa-solid fa-print"></i> PDF로 저장 / 인쇄
+            </button>
+        </div>
+
+        <div class="book-page">
+            <div class="book-cover">
+                <h1 class="book-title">Major-Specific<br>English Grammar</h1>
+                <div class="book-info">
+                    <input type="text" placeholder="학과 입력 (예: 컴퓨터공학과)" class="book-input large">
+                    <input type="text" placeholder="학번 / 이름" class="book-input medium">
+                    <p>2026 KSNU AIX-Boost Program</p>
+                </div>
+            </div>
+
+            <hr class="book-divider">
+
+            <div class="book-content">
+                <h2>Chapter 1. 수동태 (Passive Voice)</h2>
+                <div class="concept-box">
+                    <strong>💡 전공 활용 포인트:</strong>
+                    <textarea placeholder="예: 실험 결과나 시스템 작동 원리를 설명할 때 주관을 배제하기 위해 사용함..." class="book-textarea simple"></textarea>
+                </div>
+                <div class="example-box">
+                    <strong>📝 나의 Best 예문:</strong>
+                    <textarea placeholder="[예문 1] The data was processed by the algorithm...&#13;&#10;[해석] 데이터는 알고리즘에 의해 처리되었다." class="book-textarea"></textarea>
+                </div>
+
+                <br>
+
+                <h2>Chapter 2. 관계대명사 (Relative Clauses)</h2>
+                <div class="concept-box">
+                    <strong>💡 전공 활용 포인트:</strong>
+                    <textarea placeholder="예: 용어를 정의하거나, 특정 기능을 하는 부품을 구체적으로 설명할 때 사용..." class="book-textarea simple"></textarea>
+                </div>
+                <div class="example-box">
+                    <strong>📝 나의 Best 예문:</strong>
+                    <textarea placeholder="[예문 1] The sensor which detects motion is..." class="book-textarea"></textarea>
+                </div>
+
+                </div>
+        </div>
+    </div>
+
+    <nav class="bottom-nav no-print">
+        <a href="generator.html" class="b-item"><i class="fa-solid fa-wand-magic-sparkles"></i> 생성</a>
+        <a href="submission.html" class="b-item"><i class="fa-solid fa-file-pen"></i> 제출</a>
+        <a href="quiz.html" class="b-item"><i class="fa-solid fa-layer-group"></i> Quiz</a>
+        <a href="textbook.html" class="b-item active"><i class="fa-solid fa-book"></i> 교재</a>
+    </nav>
+
+</body>
+</html>
