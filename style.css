@@ -1,0 +1,72 @@
+/* style.css */
+:root {
+    --primary: #002c5f;
+    --accent: #2c82c9;
+    --bg: #f5f7fa;
+    --text: #333;
+}
+* { box-sizing: border-box; }
+body { margin: 0; font-family: 'Pretendard', sans-serif; background: var(--bg); color: var(--text); }
+a { text-decoration: none; color: inherit; }
+
+/* 공통 헤더 (네비게이션) */
+.app-header {
+    background: white; padding: 15px 20px; display: flex; justify-content: space-between;
+    align-items: center; border-bottom: 1px solid #ddd; position: sticky; top: 0; z-index: 100;
+}
+.home-btn { font-size: 1.2rem; color: var(--primary); }
+.nav-links { display: flex; gap: 10px; }
+.nav-link {
+    padding: 8px 12px; background: #eee; border-radius: 8px; font-weight: 600; color: #777; font-size: 0.9rem;
+}
+.nav-link.active { background: var(--primary); color: white; }
+
+/* 메인 화면 (index.html 전용) */
+.hero-container {
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    text-align: center; padding: 40px 20px;
+    background: linear-gradient(135deg, var(--primary) 0%, #004e92 100%);
+    color: white; min-height: 100vh;
+}
+.project-badge { background: rgba(255,255,255,0.2); padding: 8px 16px; border-radius: 20px; font-size: 0.9rem; margin-bottom: 20px; }
+.hero-title { font-size: 2.5rem; font-weight: 700; margin: 0 0 15px 0; }
+.info-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; width: 100%; max-width: 900px; margin: 40px 0; }
+.card { background: white; color: var(--text); padding: 25px; border-radius: 15px; text-align: left; }
+.card h3 { color: var(--primary); margin-top: 0; display: flex; align-items: center; gap: 10px; }
+.start-btn {
+    background: white; color: var(--primary); font-size: 1.3rem; font-weight: bold;
+    padding: 15px 50px; border: none; border-radius: 50px; cursor: pointer;
+    transition: transform 0.2s; display: inline-block;
+}
+.start-btn:hover { transform: translateY(-3px); }
+
+/* 콘텐츠 영역 */
+.container { max-width: 800px; margin: 0 auto; padding: 20px; padding-bottom: 80px; }
+.panel { background: white; padding: 20px; border-radius: 12px; border: 1px solid #eee; margin-bottom: 20px; }
+select, input { width: 100%; padding: 12px; margin: 5px 0 15px 0; border: 1px solid #ddd; border-radius: 6px; font-size: 1rem; }
+.prompt-box { background: #222; color: #eee; padding: 15px; border-radius: 8px; font-family: monospace; white-space: pre-wrap; line-height: 1.5; }
+.copy-btn { width: 100%; padding: 12px; background: var(--accent); color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+
+/* 주차별 과제 (submission.html) */
+.week-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100%, 1fr)); gap: 15px; }
+@media(min-width: 600px) { .week-grid { grid-template-columns: repeat(2, 1fr); } }
+.week-card {
+    background: white; border: 1px solid #ddd; border-radius: 10px; padding: 20px;
+    cursor: pointer; transition: all 0.2s; display: flex; justify-content: space-between; align-items: center;
+}
+.week-card:hover { border-color: var(--primary); transform: translateY(-2px); }
+.week-number { font-weight: bold; color: var(--accent); display: block; margin-bottom: 5px; }
+
+/* 퀴즈 카드 (quiz.html) */
+.flashcard { background: white; padding: 20px; border-radius: 10px; border-left: 5px solid var(--accent); margin-bottom: 10px; cursor: pointer; }
+.answer { display: none; margin-top: 10px; padding-top: 10px; border-top: 1px dashed #ddd; color: var(--accent); }
+.flashcard.flipped .answer { display: block; }
+
+/* 모바일 하단 네비 */
+.bottom-nav {
+    display: none; position: fixed; bottom: 0; width: 100%; background: white; border-top: 1px solid #ddd;
+    justify-content: space-around; padding: 10px 0; z-index: 200;
+}
+.b-item { display: flex; flex-direction: column; align-items: center; font-size: 0.8rem; color: #888; }
+.b-item.active { color: var(--primary); }
+@media (max-width: 600px) { .bottom-nav { display: flex; } .nav-links { display: none; } }
