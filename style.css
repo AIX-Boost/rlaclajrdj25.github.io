@@ -91,3 +91,96 @@ select, input { width: 100%; padding: 12px; margin: 5px 0 15px 0; border: 1px so
 .b-item { display: flex; flex-direction: column; align-items: center; font-size: 0.8rem; color: #888; }
 .b-item.active { color: var(--primary); }
 @media (max-width: 600px) { .bottom-nav { display: flex; } .nav-links { display: none; } }
+
+/* --- style.css 맨 아래에 추가하세요 --- */
+
+/* 교재 페이지 디자인 (A4 느낌) */
+.book-page {
+    background: white;
+    width: 100%;
+    max-width: 210mm; /* A4 너비 */
+    min-height: 297mm; /* A4 높이 */
+    margin: 0 auto;
+    padding: 40px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    border: 1px solid #ddd;
+}
+
+.book-cover {
+    text-align: center;
+    padding: 50px 0;
+    border-bottom: 2px solid var(--primary);
+    margin-bottom: 30px;
+}
+
+.book-title {
+    font-size: 2.5rem;
+    color: var(--primary);
+    margin-bottom: 40px;
+    font-family: 'Times New Roman', serif;
+}
+
+.book-input {
+    display: block;
+    width: 100%;
+    border: none;
+    border-bottom: 1px dashed #ccc;
+    text-align: center;
+    padding: 10px;
+    margin-bottom: 15px;
+    font-family: 'Pretendard', sans-serif;
+    background: transparent;
+}
+.book-input.large { font-size: 1.5rem; font-weight: bold; color: #333; }
+.book-input.medium { font-size: 1.2rem; color: #555; }
+
+.book-content h2 {
+    color: var(--primary);
+    border-left: 5px solid var(--accent);
+    padding-left: 15px;
+    margin-top: 30px;
+}
+
+.concept-box {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+
+.example-box {
+    border: 2px solid #eee;
+    padding: 15px;
+    border-radius: 8px;
+}
+
+.book-textarea {
+    width: 100%;
+    border: none;
+    background: transparent;
+    resize: none;
+    font-family: 'Pretendard', sans-serif;
+    font-size: 1rem;
+    line-height: 1.6;
+    overflow: hidden;
+    min-height: 100px;
+}
+.book-textarea.simple { min-height: 50px; }
+
+/* ★ 인쇄할 때 적용되는 스타일 (중요!) ★ */
+@media print {
+    body { background: white; }
+    .no-print { display: none !important; } /* 버튼, 메뉴 숨김 */
+    .container { margin: 0; padding: 0; width: 100%; max-width: none; }
+    .book-page { 
+        box-shadow: none; 
+        border: none; 
+        width: 100%; 
+        max-width: none; 
+        padding: 0; 
+    }
+    .book-textarea { border: none; resize: none; }
+    /* 인쇄 시 배경색 나오게 설정 */
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+}
