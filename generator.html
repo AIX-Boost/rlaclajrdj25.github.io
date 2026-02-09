@@ -1,71 +1,125 @@
-<style>
-    /* 1. 로봇 아이콘 버튼 (플로팅) */
-    #chatbot-launcher {
-        position: fixed;
-        bottom: 100px; /* 하단 네비게이션보다 높게 설정 */
-        right: 30px;
-        width: 65px;
-        height: 65px;
-        background-color: #3498db;
-        border-radius: 50%;
-        box-shadow: 0 5px 20px rgba(0,0,0,0.3);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        z-index: 9999; /* 최상단 레이어 */
-        transition: all 0.3s ease;
-    }
-    #chatbot-launcher:hover { transform: scale(1.1); background-color: #2980b9; }
-    #chatbot-launcher i { color: white; font-size: 32px; }
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 영문법 생성기 & 튜터</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css"> <style>
+        /* [1. 기존 생성기 스타일 유지] */
+        .prompt-box { background: #1a252f; padding: 15px; border-radius: 8px; margin-bottom: 10px; min-height: 60px; word-break: break-all; color: white; }
+        #apiResponse { white-space: pre-wrap; background: #f9f9f9; padding: 15px; border-radius: 8px; color: #333; min-height: 100px; line-height: 1.6; border: 1px solid #ddd; }
+        .generate-btn { margin-top: 10px; background: #3498db; color: white; border: none; padding: 12px; border-radius: 5px; cursor: pointer; width: 100%; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .generate-btn:disabled { background: #95a5a6; }
+        .result-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .copy-result-btn { background: #2ecc71; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-size: 14px; font-weight: bold; }
 
-    /* 2. 대화창 컨테이너 */
-    #chatbot-container {
-        position: fixed;
-        bottom: 180px;
-        right: 30px;
-        width: 400px;
-        height: 600px;
-        background: white;
-        border-radius: 20px;
-        box-shadow: 0 15px 40px rgba(0,0,0,0.2);
-        display: none; /* 클릭 전까지 숨김 */
-        z-index: 9999;
-        overflow: hidden;
-        border: 1px solid #eee;
-    }
+        /* [2. 로봇 아이콘 및 챗봇창 스타일 - 추가됨] */
+        #chatbot-launcher {
+            position: fixed;
+            bottom: 90px;
+            right: 25px;
+            width: 65px;
+            height: 65px;
+            background: #3498db;
+            border-radius: 50%;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 2000;
+            transition: all 0.3s ease;
+        }
+        #chatbot-launcher:hover { transform: scale(1.1); }
+        #chatbot-launcher i { color: white; font-size: 32px; }
 
-    /* 모바일 환경 대응 */
-    @media (max-width: 500px) {
         #chatbot-container {
-            width: 90%;
-            height: 70%;
-            right: 5%;
-            bottom: 180px;
+            position: fixed;
+            bottom: 170px;
+            right: 25px;
+            width: 400px;
+            height: 600px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+            display: none; 
+            z-index: 2000;
+            overflow: hidden;
+            border: 1px solid #eee;
         }
-    }
-</style>
+    </style>
+</head>
+<body>
+    <header class="app-header">
+        <a href="index.html" class="home-btn"><i class="fa-solid fa-house"></i></a>
+        <nav class="nav-links">
+            <a href="generator.html" class="nav-link active">생성기</a>
+            <a href="submission.html" class="nav-link">과제제출</a>
+            <a href="quiz.html" class="nav-link">Quiz</a>
+            <a href="textbook.html" class="nav-link">My교재</a>
+        </nav>
+    </header>
 
-<div id="chatbot-launcher" onclick="toggleChatbot()">
-    <i class="fa-solid fa-robot"></i>
-</div>
+    <div class="container">
+        <div class="panel">
+            <h3><i class="fa-solid fa-sliders"></i> 학습 조건 설정</h3>
+            <label>단과대학</label>
+            <select id="collegeSelect"><option value="">선택하세요</option></select>
+            <label>학과</label>
+            <select id="majorSelect"><option value="">선택하세요</option></select>
+            <label>문법 주제</label>
+            <select id="grammarSelect">
+                <option value="Passive Voice">수동태 (Passive Voice)</option>
+                <option value="Relative Clauses">관계대명사</option>
+                <option value="To-Infinitive">To 부정사</option>
+            </select>
+            <label>키워드</label>
+            <input type="text" id="keyword" placeholder="예: 데이터, 세포...">
+        </div>
 
-<div id="chatbot-container">
-    <iframe
-        src="https://udify.app/chatbot/AorUfTwnti4001pu"
-        style="width: 100%; height: 100%; border: none;"
-        allow="microphone">
-    </iframe>
-</div>
+        <div class="panel" style="background:#2c3e50; color:white;">
+            <h3><i class="fa-solid fa-terminal"></i> AI 프롬프트</h3>
+            <div id="promptDisplay" class="prompt-box">조건을 선택하세요...</div>
+            <button class="copy-btn">프롬프트 복사</button>
+            <button id="generateBtn" class="generate-btn" onclick="askGemini()">
+                <i class="fa-solid fa-paper-plane"></i> AI에게 생성 요청하기
+            </button>
+        </div>
 
-<script>
-    function toggleChatbot() {
-        const container = document.getElementById('chatbot-container');
-        // 현재 상태를 체크해서 열고 닫음
-        if (container.style.display === 'none' || container.style.display === '') {
-            container.style.display = 'block';
-        } else {
-            container.style.display = 'none';
+        <div class="panel" id="resultPanel" style="display:none; margin-top: 20px;">
+            <div class="result-header">
+                <h3 style="margin: 0;"><i class="fa-solid fa-square-poll-vertical"></i> 생성된 학습 자료</h3>
+                <button class="copy-result-btn" onclick="copyResult()">복사하기</button>
+            </div>
+            <div id="apiResponse">결과를 기다리는 중...</div>
+        </div>
+    </div>
+
+    <div id="chatbot-launcher" onclick="toggleChatbot()">
+        <i class="fa-solid fa-robot"></i>
+    </div>
+
+    <div id="chatbot-container">
+        <iframe src="https://udify.app/chatbot/AorUfTwnti4001pu" style="width: 100%; height: 100%; border: none;"></iframe>
+    </div>
+
+    <nav class="bottom-nav">
+        <a href="generator.html" class="b-item active"><i class="fa-solid fa-wand-magic-sparkles"></i> 생성</a>
+        <a href="submission.html" class="b-item"><i class="fa-solid fa-file-pen"></i> 제출</a>
+        <a href="quiz.html" class="b-item"><i class="fa-solid fa-layer-group"></i> Quiz</a>
+        <a href="textbook.html" class="b-item"><i class="fa-solid fa-book"></i> 교재</a>
+    </nav>
+
+    <script src="script.js"></script>
+    <script>
+        // 챗봇 열고 닫기 함수
+        function toggleChatbot() {
+            const chatWindow = document.getElementById('chatbot-container');
+            chatWindow.style.display = (chatWindow.style.display === 'none' || chatWindow.style.display === '') ? 'block' : 'none';
         }
-    }
-</script>
+        
+        // 기존 askGemini 함수 등은 script.js에 있거나 여기에 추가하시면 됩니다.
+    </script>
+</body>
+</html>
