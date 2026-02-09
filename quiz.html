@@ -3,33 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>토익 Part 5 퀴즈 마스터</title>
+    <title>토익 학습 & 퀴즈 매니저</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
     <style>
-        .quiz-card { background: white; border-radius: 15px; padding: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-top: 15px; position: relative; }
-        .word-text { font-size: 32px; font-weight: bold; color: #2c3e50; margin-bottom: 5px; text-align: center;}
-        .pos-text { color: #3498db; font-weight: bold; margin-bottom: 20px; display: block; text-align: center;}
-        
-        /* 타이머 스타일 */
+        /* 기본 레이아웃 */
+        .view-section { display: none; animation: fadeIn 0.3s ease; }
+        .view-section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* 메뉴 버튼 스타일 */
+        .menu-grid { display: grid; gap: 15px; margin-top: 30px; }
+        .menu-btn { 
+            padding: 25px; border-radius: 15px; border: none; background: white; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1); cursor: pointer; text-align: center;
+            transition: 0.2s; font-size: 18px; font-weight: bold; color: #2c3e50;
+        }
+        .menu-btn:hover { transform: translateY(-3px); box-shadow: 0 6px 15px rgba(0,0,0,0.15); background: #f8f9fa; }
+        .menu-btn i { font-size: 30px; margin-bottom: 10px; color: #3498db; display: block; }
+
+        /* 단어장/퀴즈 카드 */
+        .card { background: white; border-radius: 15px; padding: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-top: 15px; }
+        .word-text { font-size: 36px; font-weight: bold; color: #2c3e50; text-align: center; margin-bottom: 5px; }
+        .pos-text { color: #3498db; font-weight: bold; text-align: center; display: block; margin-bottom: 20px; }
+        .meaning-text { font-size: 20px; text-align: center; margin-bottom: 25px; color: #555; background: #f1f8ff; padding: 15px; border-radius: 8px; }
+
+        /* 퀴즈 타이머 & 옵션 */
         .timer-container { width: 100%; height: 8px; background: #eee; border-radius: 4px; overflow: hidden; margin-bottom: 20px; }
         #timerBar { width: 100%; height: 100%; background: #e74c3c; transition: width 0.1s linear; }
-
         .options-container { display: grid; gap: 10px; }
-        .opt-btn { padding: 12px; border: 2px solid #eee; border-radius: 10px; background: white; cursor: pointer; font-size: 15px; transition: 0.2s; text-align: left; }
-        .opt-btn:hover { background: #f8f9fa; border-color: #3498db; }
-        .opt-btn.correct { background: #2ecc71 !important; border-color: #27ae60 !important; color: white; }
-        .opt-btn.wrong { background: #e74c3c !important; border-color: #c0392b !important; color: white; }
-        
-        /* 예문 박스 */
-        .example-box { margin-top: 20px; padding: 15px; background: #fdf9ea; border-left: 4px solid #f1c40f; font-size: 14px; display: none; border-radius: 4px; }
-        
-        /* 오답 노트 */
-        .wrong-note { margin-top: 30px; background: #fff5f5; border-radius: 12px; padding: 20px; border: 1px solid #feb2b2; }
-        .wrong-item { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #fed7d7; font-size: 14px; }
-        .wrong-item:last-child { border-bottom: none; }
-        
-        .stats-bar { display: flex; justify-content: space-between; font-weight: bold; margin-bottom: 10px; color: #555; }
+        .opt-btn { padding: 14px; border: 2px solid #eee; border-radius: 10px; background: white; cursor: pointer; font-size: 16px; transition: 0.2s; text-align: left; }
+        .opt-btn:hover:not(:disabled) { background: #f8f9fa; border-color: #3498db; }
+        .opt-btn.correct { background: #2ecc71 !important; color: white; border-color: #27ae60 !important; }
+        .opt-btn.wrong { background: #e74c3c !important; color: white; border-color: #c0392b !important; }
+
+        /* 설정 입력창 */
+        .setup-box { background: #f8f9fa; padding: 20px; border-radius: 10px; text-align: center; }
+        .count-input { padding: 10px; width: 80px; font-size: 18px; border-radius: 5px; border: 1px solid #ddd; text-align: center; margin: 10px; }
+
+        /* 오답 리스트 */
+        .wrong-list-container { margin-top: 20px; max-height: 400px; overflow-y: auto; }
+        .wrong-item { background: #fff5f5; padding: 15px; border-radius: 8px; margin-bottom: 10px; border: 1px solid #fed7d7; display: flex; justify-content: space-between; align-items: center; }
+        .wrong-item strong { color: #e53e3e; font-size: 18px; }
+
+        .nav-btns { display: flex; gap: 10px; margin-top: 20px; }
+        .nav-btns button { flex: 1; padding: 15px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; font-size: 16px; }
+        .btn-blue { background: #3498db; color: white; }
+        .btn-gray { background: #95a5a6; color: white; }
     </style>
 </head>
 <body>
@@ -44,28 +64,63 @@
     </header>
 
     <div class="container">
-        <div class="stats-bar">
-            <span>진행: <span id="currentIdx">1</span> / <span id="totalCount">0</span></span>
-            <span>정답: <span id="scoreText">0</span></span>
-        </div>
-
-        <div class="timer-container"><div id="timerBar"></div></div>
-
-        <div id="quizBox" class="quiz-card">
+        <div id="menuView" class="view-section active">
+            <h3><i class="fa-solid fa-layer-group"></i> 학습 메뉴</h3>
+            <div class="menu-grid">
+                <button class="menu-btn" onclick="startStudy()">
+                    <i class="fa-solid fa-book-open"></i> 단어 공부하기
+                </button>
+                <button class="menu-btn" onclick="showQuizSetup()">
+                    <i class="fa-solid fa-pencil"></i> 퀴즈 풀기
+                </button>
+                <button class="menu-btn" onclick="showReview()">
+                    <i class="fa-solid fa-circle-exclamation"></i> 오답 노트 확인
+                </button>
             </div>
-
-        <div id="exampleBox" class="example-box">
-            <strong>💡 Example:</strong> <br>
-            <span id="exampleText"></span>
         </div>
 
-        <button onclick="nextQuestion()" id="nextBtn" style="display:none; width:100%; margin-top:15px; padding:12px; background:#3498db; color:white; border:none; border-radius:10px; cursor:pointer; font-weight:bold;">
-            다음 문제로 <i class="fa-solid fa-arrow-right"></i>
-        </button>
+        <div id="studyView" class="view-section">
+            <div class="stats-bar">단어 학습 (<span id="studyIdx">1</span> / <span id="studyTotal">0</span>)</div>
+            <div class="card">
+                <span id="studyPos" class="pos-text"></span>
+                <div id="studyWord" class="word-text"></div>
+                <div id="studyMeaning" class="meaning-text"></div>
+                <div id="studyEx" style="font-style: italic; color: #666; font-size: 14px; border-top: 1px solid #eee; padding-top: 10px;"></div>
+            </div>
+            <div class="nav-btns">
+                <button class="btn-gray" onclick="prevStudy()">이전</button>
+                <button class="btn-blue" onclick="nextStudy()">다음</button>
+            </div>
+            <button class="btn-gray" style="width:100%; margin-top:10px;" onclick="goHome()">메인으로</button>
+        </div>
 
-        <div class="wrong-note" id="wrongNoteSection" style="display:none;">
-            <h3><i class="fa-solid fa-book-open"></i> 나의 오답 노트</h3>
-            <div id="wrongList"></div>
+        <div id="quizSetupView" class="view-section">
+            <div class="card setup-box">
+                <h3>퀴즈 설정</h3>
+                <p>풀고 싶은 문제의 개수를 입력하세요.</p>
+                <input type="number" id="quizCountInput" class="count-input" value="10" min="1" max="200">
+                <button class="btn-blue" style="width:100%; padding:15px; border-radius:10px;" onclick="startQuiz()">퀴즈 시작하기</button>
+                <button class="btn-gray" style="width:100%; margin-top:10px; background:none; color:#7f8c8d;" onclick="goHome()">취소</button>
+            </div>
+        </div>
+
+        <div id="quizView" class="view-section">
+            <div class="stats-bar">
+                <span>진행: <span id="quizIdxDisplay">1</span> / <span id="quizTotalDisplay">0</span></span>
+                <span>정답: <span id="scoreDisplay">0</span></span>
+            </div>
+            <div class="timer-container"><div id="timerBar"></div></div>
+            <div id="quizCardBox" class="card">
+                </div>
+            <button id="quizNextBtn" class="btn-blue" style="width:100%; margin-top:15px; display:none;" onclick="nextQuizQuestion()">다음 문제 <i class="fa-solid fa-arrow-right"></i></button>
+        </div>
+
+        <div id="reviewView" class="view-section">
+            <h3><i class="fa-solid fa-circle-exclamation"></i> 나의 오답 노트</h3>
+            <p id="reviewMsg" style="color: #666;"></p>
+            <div id="wrongList" class="wrong-list-container">
+                </div>
+            <button class="btn-blue" style="width:100%; margin-top:20px;" onclick="goHome()">메인으로 돌아가기</button>
         </div>
     </div>
 
@@ -77,42 +132,83 @@
     </nav>
 
     <script>
-        // 파일의 모든 단어 데이터 (Word, POS, Meaning, Example)
+        // 전체 단어 데이터 (약 200개)
         const wordBank = [{"w": "Attach", "p": "Verb", "m": "붙이다", "e": "Please attach the file to the email."}, {"w": "Budget", "p": "Noun/Verb", "m": "예산/예산을 세우다", "e": "We need to stick to our budget."}, {"w": "Issue", "p": "Noun/Verb", "m": "문제/발행하다", "e": "This is a major issue for us."}, {"w": "Method", "p": "Noun", "m": "방법", "e": "This method is very effective."}, {"w": "Operate", "p": "Verb", "m": "운영하다", "e": "They operate a small business."}, {"w": "Policy", "p": "Noun", "m": "정책", "e": "The company has a strict policy on this."}, {"w": "Previous", "p": "Adjective", "m": "이전의", "e": "He has no previous experience."}, {"w": "Provide", "p": "Verb", "m": "제공하다", "e": "They provide excellent service."}, {"w": "Recommend", "p": "Verb", "m": "추천하다", "e": "Can you recommend a good restaurant?"}, {"w": "Reduce", "p": "Verb", "m": "줄이다", "e": "We need to reduce our expenses."}, {"w": "Release", "p": "Verb/Noun", "m": "출시하다/출시", "e": "They released a new product."}, {"w": "Require", "p": "Verb", "m": "필요로 하다", "e": "The job requires a lot of experience."}, {"w": "Schedule", "p": "Verb/Noun", "m": "일정을 잡다/일정", "e": "The meeting is scheduled for 10 a.m."}, {"w": "Select", "p": "Verb", "m": "선택하다", "e": "Please select your preferred option."}, {"w": "Survey", "p": "Verb/Noun", "m": "조사하다/조사", "e": "They conducted a customer survey."}, {"w": "Assist", "p": "Verb", "m": "돕다", "e": "Can you assist me with this task?"}, {"w": "Colleague", "p": "Noun", "m": "동료", "e": "She is a colleague of mine."}, {"w": "Decrease", "p": "Verb", "m": "감소하다", "e": "Sales decreased last quarter."}, {"w": "Introduce", "p": "Verb", "m": "소개하다", "e": "Let me introduce you to my colleague."}, {"w": "Launch", "p": "Verb/Noun", "m": "시작하다/출시", "e": "They will launch the new product next month."}, {"w": "Maintain", "p": "Verb", "m": "유지하다", "e": "They maintain high standards of quality."}, {"w": "Occur", "p": "Verb", "m": "발생하다", "e": "When did the accident occur?"}, {"w": "Procedure", "p": "Noun", "m": "절차", "e": "The procedure is very simple."}, {"w": "Promote", "p": "Verb", "m": "홍보하다, 승진시키다", "e": "They promoted the event widely."}, {"w": "Publish", "p": "Verb", "m": "출판하다", "e": "He published his first book last year."}, {"w": "React", "p": "Verb", "m": "반응하다", "e": "How did they react to the news?"}, {"w": "Realize", "p": "Verb", "m": "깨닫다, 실현하다", "e": "She realized her mistake."}, {"w": "Refuse", "p": "Verb", "m": "거절하다", "e": "She refused the offer."}, {"w": "Risk", "p": "Noun/Verb", "m": "위험/위험을 감수하다", "e": "There is a high risk of failure."}, {"w": "Similar", "p": "Adjective", "m": "비슷한", "e": "These two products are very similar."}, {"w": "Submit", "p": "Verb", "m": "제출하다", "e": "Please submit your report by Friday."}, {"w": "Suggest", "p": "Verb", "m": "제안하다", "e": "Can you suggest a good hotel?"}, {"w": "Witness", "p": "Noun/Verb", "m": "목격자/목격하다", "e": "He witnessed the accident."}, {"w": "Alternative", "p": "Noun/Adjective", "m": "대안/대안의", "e": "There is no alternative to hard work."}, {"w": "Approve", "p": "Verb", "m": "승인하다", "e": "The board approved the proposal."}, {"w": "Aware", "p": "Adjective", "m": "알고 있는", "e": "Are you aware of the new policy?"}, {"w": "Contribute", "p": "Verb", "m": "기여하다", "e": "She contributed to the project."}, {"w": "Decade", "p": "Noun", "m": "10년", "e": "She worked there for over a decade."}, {"w": "Document", "p": "Noun/Verb", "m": "문서/기록하다", "e": "Please document all your expenses."}, {"w": "Involve", "p": "Verb", "m": "포함하다", "e": "The project involves a lot of research."}, {"w": "Majority", "p": "Noun", "m": "대다수", "e": "The majority of people agreed."}, {"w": "Measure", "p": "Verb/Noun", "m": "측정하다/조치", "e": "We need to measure the room."}, {"w": "Participate", "p": "Verb", "m": "참여하다", "e": "He participated in the event."}, {"w": "Partner", "p": "Noun/Verb", "m": "파트너/제휴하다", "e": "They are our business partners."}, {"w": "Prove", "p": "Verb", "m": "증명하다", "e": "Can you prove your theory?"}, {"w": "Purchase", "p": "Verb/Noun", "m": "구매하다/구매", "e": "She purchased a new car."}, {"w": "Range", "p": "Noun/Verb", "m": "범위/이르다", "e": "The prices range from $10 to $50."}, {"w": "Remind", "p": "Verb", "m": "상기시키다", "e": "Please remind me of the meeting tomorrow."}, {"w": "Reschedule", "p": "Verb", "m": "일정을 변경하다", "e": "Can we reschedule the meeting?"}, {"w": "Translate", "p": "Verb", "m": "번역하다", "e": "Can you translate this document?"}, {"w": "Transport", "p": "Verb/Noun", "m": "운송하다/운송", "e": "The goods were transported by truck."}, {"w": "Appropriate", "p": "Adjective", "m": "적절한", "e": "This is an appropriate response."}, {"w": "Ensure", "p": "Verb", "m": "보장하다", "e": "We must ensure that standards are met."}, {"w": "Anticipate", "p": "Verb", "m": "예상하다", "e": "We anticipate a rise in sales."}, {"w": "Assess", "p": "Verb", "m": "평가하다", "e": "We need to assess the situation."}, {"w": "Boost", "p": "Verb", "m": "증가시키다", "e": "We need to boost our sales this quarter."}, {"w": "Confirm", "p": "Verb", "m": "확인하다", "e": "Can you confirm the reservation?"}, {"w": "Criteria", "p": "Noun", "m": "기준", "e": "The criteria for selection are clear."}, {"w": "Emphasize", "p": "Verb", "m": "강조하다", "e": "She emphasized the importance of education."}, {"w": "Establish", "p": "Verb", "m": "설립하다", "e": "They established a new branch."}, {"w": "Influence", "p": "Noun/Verb", "m": "영향/영향을 미치다", "e": "She has a lot of influence in the industry."}, {"w": "Negotiate", "p": "Verb", "m": "협상하다", "e": "They are negotiating a new contract."}, {"w": "Objective", "p": "Noun/Adjective", "m": "목표/객관적인", "e": "Our main objective is to increase sales."}, {"w": "Outcome", "p": "Noun", "m": "결과", "e": "The outcome was not what we expected."}, {"w": "Potential", "p": "Adjective/Noun", "m": "잠재적인/잠재력", "e": "This project has great potential."}, {"w": "Refer", "p": "Verb", "m": "언급하다", "e": "He referred to the previous meeting."}, {"w": "Secure", "p": "Verb/Adjective", "m": "확보하다/안전한", "e": "They secured the contract."}, {"w": "Accessible", "p": "Adjective", "m": "접근 가능한", "e": "The website is accessible to everyone."}, {"w": "Assemble", "p": "Verb", "m": "모으다", "e": "The team assembled for the meeting."}, {"w": "Assume", "p": "Verb", "m": "가정하다", "e": "I assumed he was coming with us."}, {"w": "Beneficial", "p": "Adjective", "m": "유익한", "e": "Regular exercise is beneficial to health."}, {"w": "Commitment", "p": "Noun", "m": "약속, 헌신", "e": "He made a commitment to improve."}, {"w": "Consequence", "p": "Noun", "m": "결과", "e": "This decision had serious consequences."}, {"w": "Corporate", "p": "Adjective", "m": "기업의", "e": "He works in the corporate sector."}, {"w": "Deny", "p": "Verb", "m": "부인하다", "e": "She denied the accusations."}, {"w": "Distribute", "p": "Verb", "m": "분배하다", "e": "They distributed the flyers yesterday."}, {"w": "Effective", "p": "Adjective", "m": "효과적인", "e": "The new policy is very effective."}, {"w": "Enhance", "p": "Verb", "m": "향상시키다", "e": "We need to enhance our marketing strategy."}, {"w": "Estimate", "p": "Verb/Noun", "m": "추정하다/추정", "e": "We need to estimate the costs involved."}, {"w": "Expand", "p": "Verb", "m": "확장하다", "e": "The company plans to expand its operations."}, {"w": "Forecast", "p": "Verb/Noun", "m": "예측하다/예측", "e": "They forecasted a rise in temperatures."}, {"w": "Generate", "p": "Verb", "m": "생성하다", "e": "The engine generates a lot of power."}, {"w": "Indicate", "p": "Verb", "m": "나타내다", "e": "The results indicate a need for change."}, {"w": "Innovative", "p": "Adjective", "m": "혁신적인", "e": "They introduced an innovative solution."}, {"w": "Integrity", "p": "Noun", "m": "진실성", "e": "He is known for his integrity."}, {"w": "Invest", "p": "Verb", "m": "투자하다", "e": "They decided to invest in new technology."}, {"w": "Monitor", "p": "Verb/Noun", "m": "감시하다/모니터", "e": "We need to monitor the situation closely."}, {"w": "Notify", "p": "Verb", "m": "알리다", "e": "Please notify us of any changes."}, {"w": "Obtain", "p": "Verb", "m": "얻다", "e": "How can I obtain a visa?"}, {"w": "Opt", "p": "Verb", "m": "선택하다", "e": "She opted for the cheaper option."}, {"w": "Overcome", "p": "Verb", "m": "극복하다", "e": "He overcame many obstacles."}, {"w": "Precise", "p": "Adjective", "m": "정확한", "e": "Can you be more precise?"}, {"w": "Prior", "p": "Adjective", "m": "이전의", "e": "He had prior commitments."}, {"w": "Proceed", "p": "Verb", "m": "진행하다", "e": "Let's proceed with the meeting."}, {"w": "Professional", "p": "Adjective", "m": "전문적인", "e": "He is a professional writer."}, {"w": "Propose", "p": "Verb", "m": "제안하다", "e": "He proposed a new plan."}, {"w": "Qualify", "p": "Verb", "m": "자격을 얻다", "e": "He qualifies for the position."}, {"w": "Recover", "p": "Verb", "m": "회복하다", "e": "He is recovering from the surgery."}, {"w": "Reflect", "p": "Verb", "m": "반영하다", "e": "The results reflect our hard work."}, {"w": "Relate", "p": "Verb", "m": "관련시키다", "e": "How do these facts relate to each other?"}, {"w": "Represent", "p": "Verb", "m": "대표하다", "e": "She represents our company."}, {"w": "Resolve", "p": "Verb", "m": "해결하다", "e": "They resolved their differences."}, {"w": "Reveal", "p": "Verb", "m": "드러내다", "e": "The survey revealed some interesting results."}, {"w": "Revise", "p": "Verb", "m": "수정하다", "e": "We need to revise the report."}, {"w": "Sector", "p": "Noun", "m": "부문", "e": "He works in the private sector."}, {"w": "Seek", "p": "Verb", "m": "찾다", "e": "We are seeking new opportunities."}, {"w": "Strategy", "p": "Noun", "m": "전략", "e": "Their strategy is very effective."}, {"w": "Technique", "p": "Noun", "m": "기술", "e": "He has excellent technique."}, {"w": "Transform", "p": "Verb", "m": "변형하다", "e": "They transformed the old factory into a museum."}, {"w": "Adequate", "p": "Adjective", "m": "적절한", "e": "The report was adequate for its purpose."}, {"w": "Appoint", "p": "Verb", "m": "임명하다", "e": "She was appointed as the new director."}, {"w": "Assign", "p": "Verb", "m": "할당하다", "e": "She was assigned to the new project."}, {"w": "Barrier", "p": "Noun", "m": "장애물", "e": "Language can be a barrier to communication."}, {"w": "Collaborate", "p": "Verb", "m": "협력하다", "e": "The two companies collaborated on the project."}, {"w": "Compromise", "p": "Noun/Verb", "m": "타협/타협하다", "e": "They reached a compromise after long discussions."}, {"w": "Conclude", "p": "Verb", "m": "결론을 내리다", "e": "They concluded the meeting early."}, {"w": "Coordinate", "p": "Verb", "m": "조정하다", "e": "We need to coordinate our efforts."}, {"w": "Crucial", "p": "Adjective", "m": "결정적인", "e": "This is a crucial moment in our history."}, {"w": "Devote", "p": "Verb", "m": "바치다", "e": "She devoted herself to her career."}, {"w": "Differ", "p": "Verb", "m": "다르다", "e": "Opinions differ on this issue."}, {"w": "Domestic", "p": "Adjective", "m": "국내의", "e": "Domestic flights are cheaper than international ones."}, {"w": "Donation", "p": "Noun", "m": "기부", "e": "They made a generous donation."}, {"w": "Eliminate", "p": "Verb", "m": "제거하다", "e": "We need to eliminate all risks."}, {"w": "Essential", "p": "Adjective", "m": "필수적인", "e": "It's essential to follow the guidelines."}, {"w": "Evaluate", "p": "Verb", "m": "평가하다", "e": "The performance was evaluated last month."}, {"w": "Exclude", "p": "Verb", "m": "제외하다", "e": "They decided to exclude him from the meeting."}, {"w": "Expertise", "p": "Noun", "m": "전문 지식", "e": "We need someone with technical expertise."}, {"w": "Fulfill", "p": "Verb", "m": "이행하다", "e": "She fulfilled her obligations on time."}, {"w": "Fundamental", "p": "Adjective", "m": "근본적인", "e": "This is a fundamental change in policy."}, {"w": "Guarantee", "p": "Verb/Noun", "m": "보장하다/보장", "e": "We guarantee the quality of our products."}, {"w": "Implement", "p": "Verb", "m": "실행하다", "e": "They implemented the new policy."}, {"w": "Incentive", "p": "Noun", "m": "장려책", "e": "The company offers incentives to employees."}, {"w": "Initial", "p": "Adjective", "m": "초기의", "e": "The initial results are promising."}, {"w": "Integrate", "p": "Verb", "m": "통합하다", "e": "They integrated the new system smoothly."}, {"w": "Inventory", "p": "Noun", "m": "재고", "e": "We need to check our inventory levels."}, {"w": "Isolate", "p": "Verb", "m": "고립시키다", "e": "They isolated the patient immediately."}, {"w": "Liability", "p": "Noun", "m": "책임", "e": "The company has a liability for damages."}, {"w": "Maximize", "p": "Verb", "m": "극대화하다", "e": "We need to maximize our profits."}, {"w": "Modify", "p": "Verb", "m": "수정하다", "e": "Can you modify this document?"}, {"w": "Neutral", "p": "Adjective", "m": "중립의", "e": "He remained neutral during the debate."}, {"w": "Obligation", "p": "Noun", "m": "의무", "e": "You have a legal obligation to pay taxes."}, {"w": "Occupy", "p": "Verb", "m": "차지하다", "e": "The building is occupied by several companies."}, {"w": "Offset", "p": "Verb", "m": "상쇄하다", "e": "The gains offset the losses."}, {"w": "Oppose", "p": "Verb", "m": "반대하다", "e": "They strongly oppose the new law."}, {"w": "Output", "p": "Noun", "m": "출력, 생산량", "e": "The factory's output has increased."}, {"w": "Perceive", "p": "Verb", "m": "인지하다", "e": "He is perceived as a leader."}, {"w": "Persuade", "p": "Verb", "m": "설득하다", "e": "He persuaded her to join the team."}, {"w": "Portion", "p": "Noun", "m": "부분", "e": "A large portion of the budget is allocated to marketing."}, {"w": "Preference", "p": "Noun", "m": "선호", "e": "She has a preference for tea over coffee."}, {"w": "Primary", "p": "Adjective", "m": "주요한", "e": "Our primary goal is customer satisfaction."}, {"w": "Productive", "p": "Adjective", "m": "생산적인", "e": "We had a very productive meeting."}, {"w": "Prohibit", "p": "Verb", "m": "금지하다", "e": "The law prohibits smoking in public places."}, {"w": "Prompt", "p": "Verb/Adjective", "m": "촉발하다/신속한", "e": "This prompted a change in policy."}, {"w": "Pursue", "p": "Verb", "m": "추구하다", "e": "She decided to pursue a career in law."}, {"w": "Regret", "p": "Verb/Noun", "m": "후회하다/후회", "e": "He regrets his decision."}, {"w": "Regulate", "p": "Verb", "m": "규제하다", "e": "The government regulates the industry."}, {"w": "Reject", "p": "Verb", "m": "거부하다", "e": "They rejected the proposal."}, {"w": "Relieve", "p": "Verb", "m": "완화하다", "e": "The medication relieved his pain."}, {"w": "Rely", "p": "Verb", "m": "의지하다", "e": "You can rely on me."}, {"w": "Renovate", "p": "Verb", "m": "개조하다", "e": "They renovated the old building."}, {"w": "Repay", "p": "Verb", "m": "갚다", "e": "He repaid the loan in full."}, {"w": "Restrict", "p": "Verb", "m": "제한하다", "e": "The law restricts smoking in public places."}, {"w": "Retain", "p": "Verb", "m": "유지하다", "e": "They retained their market share."}, {"w": "Revenue", "p": "Noun", "m": "수익", "e": "The company's revenue increased."}, {"w": "Safeguard", "p": "Verb/Noun", "m": "보호하다/보호장치", "e": "We need to safeguard our interests."}, {"w": "Separate", "p": "Verb/Adjective", "m": "분리하다/분리된", "e": "They decided to separate the departments."}, {"w": "Significant", "p": "Adjective", "m": "중요한", "e": "This is a significant discovery."}, {"w": "Simplify", "p": "Verb", "m": "단순화하다", "e": "We need to simplify the process."}, {"w": "Stable", "p": "Adjective", "m": "안정된", "e": "The economy is stable now."}, {"w": "Strengthen", "p": "Verb", "m": "강화하다", "e": "We need to strengthen our position."}, {"w": "Sufficient", "p": "Adjective", "m": "충분한", "e": "There is sufficient evidence to proceed."}, {"w": "Summarize", "p": "Verb", "m": "요약하다", "e": "Can you summarize the main points?"}, {"w": "Supervise", "p": "Verb", "m": "감독하다", "e": "He supervises a team of engineers."}, {"w": "Suspect", "p": "Verb/Noun", "m": "의심하다/용의자", "e": "I suspect he is lying."}, {"w": "Temporary", "p": "Adjective", "m": "일시적인", "e": "This is a temporary solution."}, {"w": "Transition", "p": "Noun", "m": "전환", "e": "The transition was smooth."}, {"w": "Urgent", "p": "Adjective", "m": "긴급한", "e": "This is an urgent matter."}, {"w": "Valid", "p": "Adjective", "m": "유효한", "e": "The ticket is valid for one month."}, {"w": "Visible", "p": "Adjective", "m": "눈에 보이는", "e": "The changes are clearly visible."}, {"w": "Voluntary", "p": "Adjective", "m": "자발적인", "e": "He does a lot of voluntary work."}, {"w": "Welfare", "p": "Noun", "m": "복지", "e": "The company cares about employee welfare."}, {"w": "Withdraw", "p": "Verb", "m": "인출하다", "e": "She withdrew $100 from her account."}, {"w": "Yield", "p": "Verb/Noun", "m": "생산하다/수확량", "e": "The farm yields a high amount of produce."}, {"w": "Accomplish", "p": "Verb", "m": "성취하다", "e": "She was able to accomplish her goals."}, {"w": "Allocate", "p": "Verb", "m": "할당하다", "e": "Funds were allocated to various projects."}, {"w": "Assure", "p": "Verb", "m": "확신시키다", "e": "She assured me everything was fine."}, {"w": "Caution", "p": "Noun/Verb", "m": "주의/주의를 주다", "e": "He exercised caution while driving."}, {"w": "Consistent", "p": "Adjective", "m": "일관된", "e": "His performance has been consistent."}, {"w": "Criticize", "p": "Verb", "m": "비판하다", "e": "He criticized the new policy."}, {"w": "Dedicate", "p": "Verb", "m": "헌신하다", "e": "He dedicated his life to science."}, {"w": "Desirable", "p": "Adjective", "m": "바람직한", "e": "This is a desirable outcome for all parties."}, {"w": "Distinct", "p": "Adjective", "m": "뚜렷한", "e": "There are three distinct categories."}, {"w": "Diverse", "p": "Adjective", "m": "다양한", "e": "The city is known for its diverse culture."}, {"w": "Efficient", "p": "Adjective", "m": "효율적인", "e": "The new system is much more efficient."}, {"w": "Encounter", "p": "Verb", "m": "만나다", "e": "We encountered several problems."}, {"w": "Exceed", "p": "Verb", "m": "초과하다", "e": "The sales exceeded our expectations."}, {"w": "Fluctuate", "p": "Verb", "m": "변동하다", "e": "Prices fluctuate according to demand."}, {"w": "Gradual", "p": "Adjective", "m": "점진적인", "e": "There has been a gradual improvement."}, {"w": "Illustrate", "p": "Verb", "m": "설명하다", "e": "The diagram illustrates the process."}, {"w": "Incorporate", "p": "Verb", "m": "포함하다", "e": "They incorporated new features into the product."}, {"w": "Insight", "p": "Noun", "m": "통찰력", "e": "He provided valuable insights."}, {"w": "Interpret", "p": "Verb", "m": "해석하다", "e": "Can you interpret this data?"}, {"w": "Justify", "p": "Verb", "m": "정당화하다", "e": "How can you justify your actions?"}, {"w": "Likelihood", "p": "Noun", "m": "가능성", "e": "There is a high likelihood of rain."}, {"w": "Manipulate", "p": "Verb", "m": "조종하다", "e": "He tried to manipulate the results."}, {"w": "Minimize", "p": "Verb", "m": "최소화하다", "e": "We need to minimize costs."}, {"w": "Nominate", "p": "Verb", "m": "지명하다", "e": "She was nominated for an award."}, {"w": "Omit", "p": "Verb", "m": "생략하다", "e": "You can omit this part of the report."}, {"w": "Overtime", "p": "Noun", "m": "초과 근무", "e": "They worked a lot of overtime last month."}, {"w": "Persist", "p": "Verb", "m": "지속하다", "e": "She persisted in her efforts."}, {"w": "Pioneer", "p": "Noun/Verb", "m": "개척자/개척하다", "e": "He was a pioneer in his field."}, {"w": "Predict", "p": "Verb", "m": "예측하다", "e": "They predicted a severe storm."}, {"w": "Principal", "p": "Adjective/Noun", "m": "주요한/교장", "e": "The principal reason is unclear."}, {"w": "Prospect", "p": "Noun", "m": "전망", "e": "The prospects for growth are good."}, {"w": "Quotation", "p": "Noun", "m": "인용", "e": "The book is full of famous quotations."}, {"w": "Reform", "p": "Verb", "m": "개혁하다", "e": "They proposed to reform the system."}, {"w": "Reinforce", "p": "Verb", "m": "강화하다", "e": "We need to reinforce our team."}, {"w": "Remarkable", "p": "Adjective", "m": "주목할 만한", "e": "She made a remarkable recovery."}, {"w": "Reorganize", "p": "Verb", "m": "재조직하다", "e": "The company plans to reorganize its structure."}, {"w": "Rotate", "p": "Verb", "m": "회전하다", "e": "The Earth rotates on its axis."}, {"w": "Sequence", "p": "Noun", "m": "순서", "e": "The sequence of events is important."}, {"w": "Specify", "p": "Verb", "m": "명시하다", "e": "Please specify your requirements."}, {"w": "Standardize", "p": "Verb", "m": "표준화하다", "e": "We need to standardize our procedures."}, {"w": "Substantial", "p": "Adjective", "m": "상당한", "e": "They made a substantial investment."}, {"w": "Substitute", "p": "Noun/Verb", "m": "대체물/대체하다", "e": "We need a substitute for sugar."}, {"w": "Sustain", "p": "Verb", "m": "유지하다", "e": "We need to sustain our efforts."}, {"w": "Terminate", "p": "Verb", "m": "종료하다", "e": "They terminated the contract early."}, {"w": "Transparent", "p": "Adjective", "m": "투명한", "e": "We need a more transparent process."}, {"w": "Transmit", "p": "Verb", "m": "전송하다", "e": "They transmitted the message via email."}, {"w": "Undertake", "p": "Verb", "m": "착수하다", "e": "They undertook a major renovation project."}, {"w": "Utilize", "p": "Verb", "m": "활용하다", "e": "We need to utilize all available resources."}, {"w": "Verify", "p": "Verb", "m": "확인하다", "e": "Can you verify these figures?"}, {"w": "Vulnerable", "p": "Adjective", "m": "취약한", "e": "The system is vulnerable to attacks."}, {"w": "Widespread", "p": "Adjective", "m": "널리 퍼진", "e": "There is widespread support for the proposal."}, {"w": "Abandon", "p": "Verb", "m": "버리다", "e": "They decided to abandon the project."}, {"w": "Authorize", "p": "Verb", "m": "권한을 부여하다", "e": "He is authorized to sign the contract."}, {"w": "Comply", "p": "Verb", "m": "준수하다", "e": "You must comply with the regulations."}, {"w": "Correspond", "p": "Verb", "m": "일치하다", "e": "The results correspond with our expectations."}, {"w": "Delegate", "p": "Verb", "m": "위임하다", "e": "He delegated the task to his assistant."}, {"w": "Designate", "p": "Verb", "m": "지정하다", "e": "He was designated as the spokesperson."}, {"w": "Dominant", "p": "Adjective", "m": "지배적인", "e": "The company is a dominant player in the market."}, {"w": "Endorse", "p": "Verb", "m": "지지하다", "e": "The candidate was endorsed by several celebrities."}, {"w": "Enterprise", "p": "Noun", "m": "기업", "e": "He started a new enterprise last year."}, {"w": "Exhibit", "p": "Verb/Noun", "m": "전시하다/전시회", "e": "The artist will exhibit his work in the gallery."}, {"w": "Feasible", "p": "Adjective", "m": "실행 가능한", "e": "Is this plan feasible?"}, {"w": "Framework", "p": "Noun", "m": "틀, 뼈대", "e": "The framework for the project was established."}, {"w": "Genuine", "p": "Adjective", "m": "진짜의", "e": "This is a genuine antique."}, {"w": "Imply", "p": "Verb", "m": "암시하다", "e": "What are you implying by that statement?"}, {"w": "Inspect", "p": "Verb", "m": "검사하다", "e": "The building was inspected last month."}, {"w": "Precede", "p": "Verb", "m": "앞서다", "e": "The meeting will precede lunch."}, {"w": "Preliminary", "p": "Adjective", "m": "예비의", "e": "These are just preliminary results."}, {"w": "Protocol", "p": "Noun", "m": "규약", "e": "They follow a strict protocol."}, {"w": "Quarterly", "p": "Adjective", "m": "분기별의", "e": "They meet on a quarterly basis."}];
 
-        let current = 0;
-        let score = 0;
+        // 상태 변수
+        let studyIndex = 0;
+        let quizSession = [];
+        let currentQuizIdx = 0;
+        let quizScore = 0;
         let timer;
         let timeLeft = 10;
-        const wrongWords = [];
+        const wrongAnswers = new Set(); // 오답 세션 저장용
 
-        document.getElementById('totalCount').innerText = wordBank.length;
+        // [공통] 화면 전환 함수
+        function showView(viewId) {
+            document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
+            document.getElementById(viewId).classList.add('active');
+        }
 
-        function showQuiz() {
-            const quizBox = document.getElementById('quizBox');
-            const item = wordBank[current];
-            document.getElementById('currentIdx').innerText = current + 1;
-            document.getElementById('nextBtn').style.display = 'none';
-            document.getElementById('exampleBox').style.display = 'none';
+        function goHome() { showView('menuView'); clearInterval(timer); }
+
+        // [1] 단어 학습 모드 로직
+        function startStudy() {
+            studyIndex = 0;
+            document.getElementById('studyTotal').innerText = wordBank.length;
+            updateStudyView();
+            showView('studyView');
+        }
+
+        function updateStudyView() {
+            const item = wordBank[studyIndex];
+            document.getElementById('studyIdx').innerText = studyIndex + 1;
+            document.getElementById('studyWord').innerText = item.w;
+            document.getElementById('studyPos').innerText = `[${item.p}]`;
+            document.getElementById('studyMeaning').innerText = item.m;
+            document.getElementById('studyEx').innerText = `Example: ${item.e}`;
+        }
+
+        function nextStudy() { studyIndex = (studyIndex + 1) % wordBank.length; updateStudyView(); }
+        function prevStudy() { studyIndex = (studyIndex - 1 + wordBank.length) % wordBank.length; updateStudyView(); }
+
+        // [2] 퀴즈 모드 로직
+        function showQuizSetup() { showView('quizSetupView'); }
+
+        function startQuiz() {
+            const count = parseInt(document.getElementById('quizCountInput').value) || 10;
+            const shuffled = [...wordBank].sort(() => Math.random() - 0.5);
+            quizSession = shuffled.slice(0, Math.min(count, wordBank.length));
             
-            // 타이머 초기화
+            currentQuizIdx = 0;
+            quizScore = 0;
+            document.getElementById('quizTotalDisplay').innerText = quizSession.length;
+            document.getElementById('scoreDisplay').innerText = "0";
+            
+            showQuizQuestion();
+            showView('quizView');
+        }
+
+        function showQuizQuestion() {
+            const item = quizSession[currentQuizIdx];
+            const quizBox = document.getElementById('quizCardBox');
+            document.getElementById('quizIdxDisplay').innerText = currentQuizIdx + 1;
+            document.getElementById('quizNextBtn').style.display = 'none';
+
+            // 타이머 리셋
             timeLeft = 10;
-            updateTimerBar();
             clearInterval(timer);
             timer = setInterval(() => {
                 timeLeft -= 0.1;
-                updateTimerBar();
-                if (timeLeft <= 0) {
-                    clearInterval(timer);
-                    autoWrong(); // 시간 초과 시 오답 처리
-                }
+                document.getElementById('timerBar').style.width = (timeLeft / 10) * 100 + "%";
+                if (timeLeft <= 0) { clearInterval(timer); handleTimeout(); }
             }, 100);
 
-            // 보기 생성 (정답 1개 + 랜덤 오답 3개)
+            // 보기 섞기
             let options = [item.m];
             while(options.length < 4) {
-                let randomM = wordBank[Math.floor(Math.random()*wordBank.length)].m;
-                if(!options.includes(randomM)) options.push(randomM);
+                let r = wordBank[Math.floor(Math.random()*wordBank.length)].m;
+                if(!options.includes(r)) options.push(r);
             }
             options.sort(() => Math.random() - 0.5);
 
@@ -120,74 +216,67 @@
                 <span class="pos-text">[${item.p}]</span>
                 <div class="word-text">${item.w}</div>
                 <div class="options-container">
-                    ${options.map(o => `<button class="opt-btn" onclick="check(this, '${o}', '${item.m}')">${o}</button>`).join('')}
+                    ${options.map(o => `<button class="opt-btn" onclick="checkQuiz(this, '${o}', '${item.m}')">${o}</button>`).join('')}
                 </div>
             `;
         }
 
-        function updateTimerBar() {
-            const bar = document.getElementById('timerBar');
-            bar.style.width = (timeLeft / 10) * 100 + "%";
-        }
-
-        function check(btn, selected, correct) {
+        function checkQuiz(btn, selected, correct) {
             clearInterval(timer);
             const btns = document.querySelectorAll('.opt-btn');
             btns.forEach(b => b.disabled = true);
 
-            const item = wordBank[current];
-            if(selected === correct) {
+            if (selected === correct) {
                 btn.classList.add('correct');
-                score++;
-                document.getElementById('scoreText').innerText = score;
+                quizScore++;
+                document.getElementById('scoreDisplay').innerText = quizScore;
             } else {
                 btn.classList.add('wrong');
                 btns.forEach(b => { if(b.innerText === correct) b.classList.add('correct'); });
-                addWrongNote(item);
+                wrongAnswers.add(quizSession[currentQuizIdx]); // 오답 저장
             }
-            
-            showExample(item.e);
-            document.getElementById('nextBtn').style.display = 'block';
+            document.getElementById('quizNextBtn').style.display = 'block';
         }
 
-        function autoWrong() {
+        function handleTimeout() {
+            wrongAnswers.add(quizSession[currentQuizIdx]);
             const btns = document.querySelectorAll('.opt-btn');
             btns.forEach(b => {
                 b.disabled = true;
-                if(b.innerText === wordBank[current].m) b.classList.add('correct');
+                if(b.innerText === quizSession[currentQuizIdx].m) b.classList.add('correct');
             });
-            addWrongNote(wordBank[current]);
-            showExample(wordBank[current].e);
-            document.getElementById('nextBtn').style.display = 'block';
+            document.getElementById('quizNextBtn').style.display = 'block';
         }
 
-        function showExample(ex) {
-            const box = document.getElementById('exampleBox');
-            document.getElementById('exampleText').innerText = ex || "No example provided.";
-            box.style.display = 'block';
-        }
-
-        function addWrongNote(item) {
-            // 중복 방지
-            if (!wrongWords.some(w => w.w === item.w)) {
-                wrongWords.push(item);
-                const noteSection = document.getElementById('wrongNoteSection');
-                const list = document.getElementById('wrongList');
-                noteSection.style.display = 'block';
-                
-                const div = document.createElement('div');
-                div.className = 'wrong-item';
-                div.innerHTML = `<strong>${item.w}</strong> <span>${item.m}</span>`;
-                list.prepend(div);
+        function nextQuizQuestion() {
+            currentQuizIdx++;
+            if (currentQuizIdx < quizSession.length) {
+                showQuizQuestion();
+            } else {
+                alert(`퀴즈 완료! 점수: ${quizScore} / ${quizSession.length}`);
+                showReview();
             }
         }
 
-        function nextQuestion() {
-            current = (current + 1) % wordBank.length;
-            showQuiz();
+        // [3] 오답 노트 로직
+        function showReview() {
+            const list = document.getElementById('wrongList');
+            const msg = document.getElementById('reviewMsg');
+            list.innerHTML = '';
+            
+            if (wrongAnswers.size === 0) {
+                msg.innerText = "아직 틀린 문제가 없습니다. 완벽해요!";
+            } else {
+                msg.innerText = `총 ${wrongAnswers.size}개의 단어를 다시 복습하세요.`;
+                wrongAnswers.forEach(item => {
+                    const div = document.createElement('div');
+                    div.className = 'wrong-item';
+                    div.innerHTML = `<div><strong>${item.w}</strong><br><small>${item.m}</small></div>`;
+                    list.appendChild(div);
+                });
+            }
+            showView('reviewView');
         }
-
-        window.onload = showQuiz;
     </script>
 </body>
 </html>
