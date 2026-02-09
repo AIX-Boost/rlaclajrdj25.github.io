@@ -208,3 +208,20 @@ async function askGemini() {
         btn.disabled = false;
     }
 }
+
+// 생성된 학습 자료를 복사하는 함수
+function copyResult() {
+    const resultText = document.getElementById('apiResponse').innerText;
+    
+    // 내용이 비어있거나 초기 메시지인 경우 방지
+    if (resultText.includes("기다리는 중") || resultText === "") {
+        alert("복사할 내용이 없습니다.");
+        return;
+    }
+
+    navigator.clipboard.writeText(resultText).then(() => {
+        alert('학습 자료가 클립보드에 복사되었습니다! 메모장이나 과제 창에 붙여넣으세요.');
+    }).catch(err => {
+        console.error('복사 실패:', err);
+    });
+}
