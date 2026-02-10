@@ -41,21 +41,23 @@ const weeks = [
 ================================ */
 document.addEventListener("DOMContentLoaded", () => {
 
-  /* 생성기 페이지 */
+  /* 생성기: 대학 셀렉트 */
   const collegeSelect = document.getElementById("collegeSelect");
   if (collegeSelect) {
+    collegeSelect.innerHTML = "";
     for (let college in collegeData) {
       const option = document.createElement("option");
       option.value = college;
       option.innerText = college;
       collegeSelect.appendChild(option);
     }
-    generatePrompt();
+    updateMajors();
   }
 
-  /* 과제제출 페이지 */
+  /* 과제제출: 주차 카드 */
   const weekGrid = document.getElementById("weekGrid");
   if (weekGrid) {
+    weekGrid.innerHTML = "";
     weeks.forEach(week => {
       const card = document.createElement("div");
       card.className = "week-card";
@@ -73,15 +75,15 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 /* ===============================
-   생성기 관련
+   생성기 로직
 ================================ */
 function updateMajors() {
   const college = document.getElementById("collegeSelect")?.value;
   const majorSelect = document.getElementById("majorSelect");
   if (!college || !majorSelect) return;
 
-  majorSelect.innerHTML = `<option value="">학과 선택</option>`;
-  collegeData[college]?.forEach(major => {
+  majorSelect.innerHTML = "";
+  collegeData[college].forEach(major => {
     const opt = document.createElement("option");
     opt.value = major;
     opt.innerText = major;
@@ -95,13 +97,18 @@ function generatePrompt() {
   const college = document.getElementById("collegeSelect")?.value || "University";
   const major = document.getElementById("majorSelect")?.value || "Major";
   const grammar = document.getElementById("grammarSelect")?.value || "Grammar";
-  const keyword = document.getElementById("keyword")?.value || "Topic";
-
+  const keyword = document.getElementById("keyword")?.value || "(Topic Keyword)";
   const display = document.getElementById("promptDisplay");
   if (!display) return;
 
   display.innerText = `Act as a professor in ${major} (${college}).
-Create example sentences using "${grammar}" about "${keyword}".`;
+I am a student majoring in ${major}.
+Please create 3 example sentences using "${grammar}" related to the keyword "${keyword}" in the context of ${major}.
+[Requirements]
+1. Use professional vocabulary related to ${major}.
+2. Provide a Korean translation for each sentence.
+3. Explain why this grammar is used in this context.
+4. Create a "Fill-in-the-blank" quiz for each sentence.`;
 }
 
 /* ===============================
@@ -112,6 +119,7 @@ function openWeekAssignment(week) {
   document.getElementById("assignment-detail-view").style.display = "block";
   document.getElementById("currentWeekTitle").innerText = `Week ${week.id}`;
   document.getElementById("currentWeekTopic").innerText = week.topic;
+
   loadGiscus(`week-${week.id}`);
 }
 
@@ -122,13 +130,15 @@ function backToWeekList() {
 }
 
 /* ===============================
-   Giscus
+   Giscus (로그인/댓글)
 ================================ */
 function loadGiscus(term) {
   const container = document.querySelector(".giscus-container");
   if (!container) return;
 
   container.innerHTML = "";
+  container.style.minHeight = "400px";
+
   const script = document.createElement("script");
   script.src = "https://giscus.app/client.js";
   script.setAttribute("data-repo", GISCUS_REPO);
@@ -138,7 +148,11 @@ function loadGiscus(term) {
   script.setAttribute("data-mapping", "specific");
   script.setAttribute("data-term", term);
   script.setAttribute("data-lang", "ko");
-  script.async = true;
+  script.setAttribute("data-theme", "light");
+  script.setAttribute("data-input-position", "top");
+  script.setAttribute("data-loading", "lazy");
   script.crossOrigin = "anonymous";
+  script.async = true;
+
   container.appendChild(script);
 }
