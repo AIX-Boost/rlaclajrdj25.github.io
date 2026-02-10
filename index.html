@@ -6,6 +6,30 @@
     <title>KSNU AI Major Grammar</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* 추가된 교수자 입구 스타일 */
+        .admin-entry-zone {
+            margin-top: 60px;
+            padding: 30px 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+        }
+        .admin-link {
+            color: rgba(255, 255, 255, 0.6);
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .admin-link:hover {
+            color: #f1c40f; /* 황금색으로 강조 */
+        }
+        .admin-link i {
+            font-size: 0.9rem;
+        }
+    </style>
 </head>
 <body>
     <div class="hero-container">
@@ -27,6 +51,35 @@
         </div>
 
         <a href="generator.html" class="start-btn">프로젝트 시작하기 <i class="fa-solid fa-arrow-right"></i></a>
+
+        <div class="admin-entry-zone">
+            <a href="#" onclick="enterAdminMode(); return false;" class="admin-link">
+                <i class="fa-solid fa-graduation-cap"></i> 교육 운영자이신가요? 
+                <span style="text-decoration: underline;">교수자 전용 모드 접속</span>
+            </a>
+            <p style="font-size: 0.7rem; color: rgba(255,255,255,0.4); margin-top: 8px;">
+                (시연용 암호: kunsan123)
+            </p>
+        </div>
     </div>
+
+    <script>
+        /**
+         * 교수자 모드 진입 함수
+         * 보안을 위해 간단한 암호 인증을 거칩니다.
+         */
+        function enterAdminMode() {
+            const pw = prompt("교수자 인증 암호를 입력해주세요.\n(공모전 시연용: kunsan123)");
+            
+            if (pw === "kunsan123") {
+                // 인증 성공 시 세션 스토리지에 기록하여 admin.html에서도 확인 가능하게 함
+                sessionStorage.setItem("admin_auth", "true");
+                alert("인증되었습니다. 교수자 관리 대시보드로 이동합니다.");
+                location.href = "admin.html";
+            } else if (pw !== null) {
+                alert("암호가 틀렸습니다. 접근 권한이 없습니다.");
+            }
+        }
+    </script>
 </body>
 </html>
