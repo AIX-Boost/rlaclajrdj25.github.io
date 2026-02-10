@@ -1,5 +1,3 @@
-/* script.js */
-
 /* ===============================
    GISCUS 설정
 ================================ */
@@ -25,34 +23,13 @@ const weeks = [
   { id: 2, title: "명사와 관사 바로 쓰기", topic: "명사/관사(Noun/Article)" },
   { id: 3, title: "시제의 이해 (현재/과거/미래)", topic: "시제(Tense)" },
   { id: 4, title: "수동태의 활용 (Passive Voice)", topic: "수동태(Passive Voice)" },
-  { id: 5, title: "To 부정사의 명사적 용법", topic: "To 부정사(To-Infinitive)" },
-  { id: 6, title: "동명사와 현재분사 구분", topic: "동명사(Gerund)" },
-  { id: 7, title: "분사구문과 전공 텍스트 해석", topic: "분사구문(Participle)" },
-  { id: 8, title: "중간고사 대체 과제", topic: "중간 점검(Midterm)" },
-  { id: 9, title: "관계대명사 (주격/목적격)", topic: "관계대명사(Relative Clause)" },
-  { id: 10, title: "관계부사와 복합관계사", topic: "관계부사(Relative Adverb)" },
-  { id: 11, title: "가정법 과거와 과거완료", topic: "가정법(Subjunctive)" },
-  { id: 12, title: "접속사와 전치사의 차이", topic: "접속사(Conjunctions)" },
-  { id: 13, title: "비교구문과 최상급 표현", topic: "비교급(Comparison)" },
-  { id: 14, title: "특수구문 (도치/강조)", topic: "특수구문(Special Syntax)" },
-  { id: 15, title: "기말 프로젝트 제출", topic: "기말 과제(Final Project)" }
+  { id: 5, title: "To 부정사의 명사적 용법", topic: "To 부정사(To-Infinitive)" }
 ];
 
 /* ===============================
    페이지 로드
 ================================ */
 document.addEventListener("DOMContentLoaded", () => {
-  const collegeSelect = document.getElementById("collegeSelect");
-  if (collegeSelect) {
-    for (let college in collegeData) {
-      const option = document.createElement("option");
-      option.value = college;
-      option.innerText = college;
-      collegeSelect.appendChild(option);
-    }
-    generatePrompt();
-  }
-
   const weekGrid = document.getElementById("weekGrid");
   if (weekGrid) {
     weeks.forEach(week => {
@@ -72,78 +49,31 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 /* ===============================
-   프롬프트 생성
+   주차 클릭 → 과제 제출 화면
 ================================ */
-function updateMajors() {
-  const college = document.getElementById("collegeSelect").value;
-  const majorSelect = document.getElementById("majorSelect");
-  majorSelect.innerHTML = `<option value="">학과를 선택하세요</option>`;
+function openWeekAssignment(week) {
+  document.getElementById("week-list-view").style.display = "none";
+  document.getElementById("assignment-detail-view").style.display = "block";
 
-  if (collegeData[college]) {
-    collegeData[college].forEach(major => {
-      const option = document.createElement("option");
-      option.value = major;
-      option.innerText = major;
-      majorSelect.appendChild(option);
-    });
-  }
-  generatePrompt();
-}
+  document.getElementById("currentWeekTitle").innerText = `Week ${week.id}`;
+  document.getElementById("currentWeekTopic").innerText = week.topic;
 
-function generatePrompt() {
-  const college = document.getElementById("collegeSelect").value || "University";
-  const major = document.getElementById("majorSelect").value || "Major";
-  const grammar = document.getElementById("grammarSelect").value;
-  const keyword = document.getElementById("keyword").value || "(Topic Keyword)";
-
-  const txt = `Act as a professor in ${major} (${college}).
-I am a student majoring in ${major}.
-Please create 3 example sentences using "${grammar}" related to the keyword "${keyword}" in the context of ${major}.
-[Requirements]
-1. Use professional vocabulary related to ${major}.
-2. Provide a Korean translation for each sentence.
-3. Explain why this grammar is used in this context.
-4. Create a "Fill-in-the-blank" quiz for each sentence.`;
-
-  document.getElementById("promptDisplay").innerText = txt;
+  loadGiscus(`week-${week.id}`);
 }
 
 /* ===============================
-   Gemini 호출 (서버리스 경유)
+   목록으로 돌아가기
 ================================ */
-async function askGemini() {
-  const promptText = document.getElementById("promptDisplay").innerText;
-  const responseDisplay = document.getElementById("apiResponse");
-  const resultPanel = document.getElementById("resultPanel");
-  const btn = document.getElementById("generateBtn");
+function backToWeekList() {
+  document.getElementById("assignment-detail-view").style.display = "none";
+  document.getElementById("week-list-view").style.display = "block";
 
-  resultPanel.style.display = "block";
-  responseDisplay.innerText = "AI가 답변을 생성 중입니다...";
-  btn.disabled = true;
-
-  try {
-    const response = await fetch(
-      "https://aix-boost-api.vercel.app/api/gemini",
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt: promptText })
-      }
-    );
-
-    const data = await response.json();
-    responseDisplay.innerText =
-      data.candidates?.[0]?.content?.parts?.[0]?.text ||
-      "응답을 불러오지 못했습니다.";
-  } catch (err) {
-    responseDisplay.innerText = "오류 발생: " + err.message;
-  } finally {
-    btn.disabled = false;
-  }
+  const container = document.querySelector(".giscus-container");
+  if (container) container.innerHTML = "";
 }
 
 /* ===============================
-   Giscus
+   Giscus 로드
 ================================ */
 function loadGiscus(term) {
   const container = document.querySelector(".giscus-container");
@@ -158,7 +88,9 @@ function loadGiscus(term) {
   script.setAttribute("data-mapping", "specific");
   script.setAttribute("data-term", term);
   script.setAttribute("data-lang", "ko");
+  script.setAttribute("data-theme", "light");
   script.async = true;
+  script.crossOrigin = "anonymous";
+
   container.appendChild(script);
 }
-
