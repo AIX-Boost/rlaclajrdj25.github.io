@@ -37,7 +37,6 @@ const weeks = [
    DOM 로드 및 초기화
 ================================ */
 document.addEventListener("DOMContentLoaded", () => {
-  // 1. 대학 선택 셀렉트 박스 초기화
   const collegeSelect = document.getElementById("collegeSelect");
   if (collegeSelect) {
     collegeSelect.innerHTML = '<option value="">선택하세요</option>';
@@ -49,7 +48,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // 2. 과제제출 주차별 카드 생성
   const weekGrid = document.getElementById("weekGrid");
   if (weekGrid) {
     weekGrid.innerHTML = "";
@@ -116,19 +114,40 @@ function copyPrompt() {
 async function askGemini() {
   const apiResponse = document.getElementById("apiResponse");
   const resultPanel = document.getElementById("resultPanel");
-  if (!apiResponse) return;
+  const promptText = document.getElementById("promptDisplay")?.innerText;
+
+  if (!apiResponse || !resultPanel || !promptText) return;
 
   resultPanel.style.display = "block";
-  apiResponse.innerText = "자료 생성 중입니다... (오후 5시 이후 한도 리셋됨)";
-  
-  // API 호출 시뮬레이션
-  setTimeout(() => {
-    apiResponse.innerText = "API 키 연동 전입니다. 복사한 프롬프트를 챗봇에 활용해 보세요!";
-  }, 1500);
+  apiResponse.innerText = "제미나이가 학습 자료를 생성 중입니다... (한국시간 오후 5시 초기화)";
+
+  try {
+    // Vercel Serverless Function 호출
+    const response = await fetch('/api/gemini', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt: promptText }),
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      apiResponse.innerText = data.text;
+    } else {
+      if (response.status === 429) {
+        apiResponse.innerText = "무료 할당량을 모두 사용했습니다. 오후 5시 이후 리셋되거나 새 키를 등록하세요.";
+      } else {
+        apiResponse.innerText = "에러 발생: " + (data.error || "알 수 없는 오류");
+      }
+    }
+  } catch (error) {
+    apiResponse.innerText = "서버 연결에 실패했습니다. 인터넷 상태를 확인하세요.";
+    console.error(error);
+  }
 }
 
 /* ===============================
-   과제 제출 로직 (Submission)
+   과제 제출 및 기타 로직
 ================================ */
 function openWeekAssignment(week) {
   document.getElementById("week-list-view").style.display = "none";
