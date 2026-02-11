@@ -2,8 +2,11 @@
    설정 및 데이터
 ================================ */
 const GISCUS_REPO = "AIX-Boost/AIX-Boost.github.io";
-const GISCUS_REPO_ID = "R_kgDOL..."; // 실제 ID로 유지하세요
-const GISCUS_CATEGORY_ID = "DIC_kwDOL..."; // 실제 ID로 유지하세요
+const GISCUS_REPO_ID = "R_kgDOL..."; // 실제 ID
+const GISCUS_CATEGORY_ID = "DIC_kwDOL..."; // 실제 ID
+
+// ✅ 너의 Vercel API 도메인 (중요)
+const API_BASE = "https://aix-boost-api.vercel.app";
 
 const collegeData = {
   "컴퓨터소프트웨어특성화대학": ["컴퓨터정보공학과", "인공지능융합학과", "임베디드소프트웨어학과", "소프트웨어학과", "IT융합통신공학과"],
@@ -119,29 +122,30 @@ async function askGemini() {
   if (!apiResponse || !resultPanel || !promptText) return;
 
   resultPanel.style.display = "block";
-  apiResponse.innerText = "제미나이가 학습 자료를 생성 중입니다... (한국시간 오후 5시 초기화)";
+  apiResponse.innerText = "제미나이가 학습 자료를 생성 중입니다...";
 
   try {
-    // Vercel Serverless Function 호출
-    const response = await fetch('/api/gemini', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+    // ✅ Vercel API 절대 URL 호출 (중요)
+    const response = await fetch(`${API_BASE}/api/gemini`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ prompt: promptText }),
     });
 
-    const data = await response.json();
+    // ✅ JSON이 아닐 가능성 대비
+    const raw = await response.text();
+    let data = {};
+    try { data = JSON.parse(raw); } catch {}
 
     if (response.ok) {
-      apiResponse.innerText = data.text;
+      apiResponse.innerText = data.text || "(응답이 비어있습니다)";
+    } else if (response.status === 429) {
+      apiResponse.innerText = "무료 할당량을 모두 사용했습니다. 시간이 지나면 리셋되거나 새 키를 등록하세요.";
     } else {
-      if (response.status === 429) {
-        apiResponse.innerText = "무료 할당량을 모두 사용했습니다. 오후 5시 이후 리셋되거나 새 키를 등록하세요.";
-      } else {
-        apiResponse.innerText = "에러 발생: " + (data.error || "알 수 없는 오류");
-      }
+      apiResponse.innerText = "에러 발생: " + (data.error || `HTTP ${response.status}\n${raw.slice(0, 200)}`);
     }
   } catch (error) {
-    apiResponse.innerText = "서버 연결에 실패했습니다. 인터넷 상태를 확인하세요.";
+    apiResponse.innerText = "요청 실패(대부분 CORS/도메인/서버 문제): " + (error?.message || error);
     console.error(error);
   }
 }
@@ -182,3 +186,4 @@ function loadGiscus(term) {
   script.async = true;
   container.appendChild(script);
 }
+
